@@ -4,7 +4,7 @@ namespace Core
 {
 	public class Memory
 	{
-		private static readonly byte[] fontset =
+		public static readonly byte[] Fontset =
 		{
 			 0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
 			 0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -24,6 +24,10 @@ namespace Core
 			 0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 		};
 
+		public static readonly byte LetterSize = 5;
+
+		public static readonly ushort FonsetStartAddress = 0x50;
+
 		private const ushort MaxBytes = 4096;
 
 		private byte[] bytes = new byte[MaxBytes];
@@ -38,7 +42,7 @@ namespace Core
 			bytes = new byte[MaxBytes];
 
 			for (int i = 0; i < 80; ++i)
-				bytes[i + 0x050] = fontset[i];
+				bytes[i + FonsetStartAddress] = Fontset[i];
 		}
 
 		public byte GetByte(ushort pos)
@@ -64,7 +68,7 @@ namespace Core
 
 		private bool IsValidReadPos(ushort pos)
 		{
-			return IsValidWritePos(pos) || (pos >= 0x50 && pos <= 0xA0);
+			return IsValidWritePos(pos) || (pos >= FonsetStartAddress && pos <= 0xA0);
 		}
 	}
 }

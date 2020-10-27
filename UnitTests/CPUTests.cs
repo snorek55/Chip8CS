@@ -4,6 +4,8 @@ using FluentAssertions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using System;
+
 namespace UnitTests
 {
 	[TestClass]
@@ -73,13 +75,443 @@ namespace UnitTests
 		}
 
 		[TestMethod]
-		public void Op_3xkk_Ok()
+		public void Op_3xkk_WhenVRegAndByte_AreEqual()
 		{
 			mem.SetByte(0x200, 0X30);
 			mem.SetByte(0x201, 0x10);
 			cpu.VRegisters[0] = 0x10;
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X204);
+		}
+
+		[TestMethod]
+		public void Op_3xkk_WhenVRegAndByte_AreNotEqual()
+		{
+			mem.SetByte(0x200, 0X30);
+			mem.SetByte(0x201, 0x11);
+			cpu.VRegisters[0] = 0x10;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+		}
+
+		[TestMethod]
+		public void Op_4xkk__WhenVRegAndByte_AreEqual()
+		{
+			mem.SetByte(0x200, 0X40);
+			mem.SetByte(0x201, 0x11);
+			cpu.VRegisters[0] = 0x11;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+		}
+
+		[TestMethod]
+		public void Op_4xkk_WhenVRegAndByte_AreNotEqual()
+		{
+			mem.SetByte(0x200, 0X40);
+			mem.SetByte(0x201, 0x10);
+			cpu.VRegisters[0] = 0x11;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X204);
+		}
+
+		[TestMethod]
+		public void Op_5xy0_WhenVRegisters_AreEqual()
+		{
+			mem.SetByte(0x200, 0X51);
+			mem.SetByte(0x201, 0x20);
+			cpu.VRegisters[1] = 0x12;
+			cpu.VRegisters[2] = 0x12;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X204);
+		}
+
+		[TestMethod]
+		public void Op_5xy0_WhenVRegisters_AreNotEqual()
+		{
+			mem.SetByte(0x200, 0X51);
+			mem.SetByte(0x201, 0x20);
+			cpu.VRegisters[1] = 0x12;
+			cpu.VRegisters[2] = 0x1;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
+		public void Op_5xyn_Throws_WhenNIsNot0()
+		{
+			mem.SetByte(0x200, 0X51);
+			mem.SetByte(0x201, 0x21);
+			cpu.Cycle();
+		}
+
+		[TestMethod]
+		public void Op_6xkk_Ok()
+		{
+			mem.SetByte(0x200, 0X61);
+			mem.SetByte(0x201, 0x26);
+			cpu.VRegisters[1] = 0x12;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+			cpu.VRegisters[1].Should().Be(0x26);
+		}
+
+		[TestMethod]
+		public void Op_7xkk_Ok()
+		{
+			mem.SetByte(0x200, 0X71);
+			mem.SetByte(0x201, 0x26);
+			cpu.VRegisters[1] = 0x12;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+			cpu.VRegisters[1].Should().Be(0x38);
+		}
+
+		[TestMethod]
+		public void Op_8xy0_Ok()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x20);
+			cpu.VRegisters[1] = 0x15;
+			cpu.VRegisters[2] = 0x56;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+			cpu.VRegisters[1].Should().Be(0x56);
+		}
+
+		[TestMethod]
+		public void Op_8xy1_Ok()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x21);
+			cpu.VRegisters[1] = 0x15;
+			cpu.VRegisters[2] = 0x56;
+			var expected = Convert.ToByte(cpu.VRegisters[1] | cpu.VRegisters[2]);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expected);
+		}
+
+		[TestMethod]
+		public void Op_8xy2_Ok()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x22);
+			cpu.VRegisters[1] = 0x15;
+			cpu.VRegisters[2] = 0x56;
+			var expected = Convert.ToByte(cpu.VRegisters[1] & cpu.VRegisters[2]);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expected);
+		}
+
+		[TestMethod]
+		public void Op_8xy3_Ok()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x23);
+			cpu.VRegisters[1] = 0x15;
+			cpu.VRegisters[2] = 0x56;
+			var expected = Convert.ToByte(cpu.VRegisters[1] ^ cpu.VRegisters[2]);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expected);
+		}
+
+		[TestMethod]
+		public void Op_8xy4_SumLessThan256_ShouldNotSetCarry_AndSumLowest8Bits()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x24);
+			cpu.VRegisters[1] = 0x8;
+			cpu.VRegisters[2] = 0x3;
+			cpu.VRegisters[0xF] = 2;//just to make sure it changes
+			var expectedSum = Convert.ToByte(cpu.VRegisters[1] + cpu.VRegisters[2]);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expectedSum);
+			cpu.VRegisters[0xF].Should().Be(0);
+		}
+
+		[TestMethod]
+		public void Op_8xy4_SumGreaterThan256_ShouldSetCarry_AndSumLowest8Bits()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x24);
+			cpu.VRegisters[1] = 0xFF;
+			cpu.VRegisters[2] = 0x68;
+			cpu.VRegisters[0xF] = 2;//just to make sure it changes
+			var word = cpu.VRegisters[1] + cpu.VRegisters[2];
+			var expectedSum = Convert.ToByte(word & 0xFF);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expectedSum);
+			cpu.VRegisters[0xF].Should().Be(1);
+		}
+
+		[TestMethod]
+		public void Op_8xy5_WithNoBorrow()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x25);
+			cpu.VRegisters[1] = 0x8;
+			cpu.VRegisters[2] = 0x3;
+			cpu.VRegisters[0xF] = 2;//just to make sure it changes
+			var expectedSub = Convert.ToByte(cpu.VRegisters[1] - cpu.VRegisters[2]);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expectedSub);
+			cpu.VRegisters[0xF].Should().Be(1);
+		}
+
+		[TestMethod]
+		public void Op_8xy5_WithBorrow()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x25);
+			cpu.VRegisters[1] = 0x3;
+			cpu.VRegisters[2] = 0x54;
+			cpu.VRegisters[0xF] = 2;//just to make sure it changes
+			var word = cpu.VRegisters[1] - cpu.VRegisters[2];
+			var expectedSub = Convert.ToByte(word & 0xFF);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expectedSub);
+			cpu.VRegisters[0xF].Should().Be(0);
+		}
+
+		[TestMethod]
+		public void Op_8xy6_CarryShouldBe1_SHR_Ok()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x26);
+			cpu.VRegisters[1] = 0x15;
+			var expected = Convert.ToByte(cpu.VRegisters[1] >> 1);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expected);
+			cpu.VRegisters[0xF].Should().Be(1);
+		}
+
+		[TestMethod]
+		public void Op_8xy6_CarryShouldNotBe1_SHR_Ok()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x26);
+			cpu.VRegisters[1] = 0x14;
+			var expected = Convert.ToByte(cpu.VRegisters[1] >> 1);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expected);
+			cpu.VRegisters[0xF].Should().Be(0);
+		}
+
+		[TestMethod]
+		public void Op_8xy7_WithNoBorrow()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x27);
+			cpu.VRegisters[1] = 0x2;
+			cpu.VRegisters[2] = 0x8;
+			cpu.VRegisters[0xF] = 2;//just to make sure it changes
+			var expectedSub = Convert.ToByte(cpu.VRegisters[2] - cpu.VRegisters[1]);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expectedSub);
+			cpu.VRegisters[0xF].Should().Be(1);
+		}
+
+		[TestMethod]
+		public void Op_8xy7_WithBorrow()
+		{
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x27);
+			cpu.VRegisters[1] = 0x10;
+			cpu.VRegisters[2] = 0x6;
+			cpu.VRegisters[0xF] = 2;//just to make sure it changes
+			var word = cpu.VRegisters[2] - cpu.VRegisters[1];
+			var expectedSub = Convert.ToByte(word & 0xFF);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+
+			cpu.VRegisters[1].Should().Be(expectedSub);
+			cpu.VRegisters[0xF].Should().Be(0);
+		}
+
+		[TestMethod]
+		public void Op_9xy0_WhenVRegisters_AreEqual()
+		{
+			mem.SetByte(0x200, 0X91);
+			mem.SetByte(0x201, 0x20);
+			cpu.VRegisters[1] = 0x12;
+			cpu.VRegisters[2] = 0x12;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X202);
+		}
+
+		[TestMethod]
+		public void Op_9xy0_WhenVRegisters_AreNotEqual()
+		{
+			mem.SetByte(0x200, 0X91);
+			mem.SetByte(0x201, 0x20);
+			cpu.VRegisters[1] = 0x12;
+			cpu.VRegisters[2] = 0x1;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0X204);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
+		public void Op_9xyn_Throws_WhenNIsNot0()
+		{
+			mem.SetByte(0x200, 0X91);
+			mem.SetByte(0x201, 0x21);
+			cpu.Cycle();
+		}
+
+		[TestMethod]
+		public void Op_Annn_Ok()
+		{
+			mem.SetByte(0x200, 0XA0);
+			mem.SetByte(0x201, 0x01);
+			cpu.Cycle();
+			cpu.IndexRegister.Should().Be(1);
+		}
+
+		[TestMethod]
+		public void Op_Bnnn_Ok()
+		{
+			mem.SetByte(0x200, 0XB0);
+			mem.SetByte(0x201, 0x01);
+			cpu.VRegisters[0] = 0x15;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0x16);
+		}
+
+		[TestMethod]
+		public void Op_ExE9_WhenKeyPressed_Skips()
+		{
+			mem.SetByte(0x200, 0XE0);
+			mem.SetByte(0x201, 0xE9);
+			cpu.VRegisters[0] = 0x4;
+			cpu.KeyState[4] = true;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0x204);
+		}
+
+		[TestMethod]
+		public void Op_ExE9_WhenKeyNotPressed_DoesNothing()
+		{
+			mem.SetByte(0x200, 0XE0);
+			mem.SetByte(0x201, 0xE9);
+			cpu.VRegisters[0] = 0x4;
+			cpu.KeyState[4] = false;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0x202);
+		}
+
+		[TestMethod]
+		public void Op_ExA1_WhenKeyNotPressed_Skips()
+		{
+			mem.SetByte(0x200, 0XE0);
+			mem.SetByte(0x201, 0xA1);
+			cpu.VRegisters[0] = 0x4;
+			cpu.KeyState[4] = false;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0x204);
+		}
+
+		[TestMethod]
+		public void Op_ExA1_WhenKeyPressed_DoesNothing()
+		{
+			mem.SetByte(0x200, 0XE0);
+			mem.SetByte(0x201, 0xA1);
+			cpu.VRegisters[0] = 0x4;
+			cpu.KeyState[4] = true;
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0x202);
+		}
+
+		[TestMethod]
+		public void Op_Fx07_Ok()
+		{
+			mem.SetByte(0x200, 0XF0);
+			mem.SetByte(0x201, 0x07);
+			cpu.delayTimer = 0x55;
+			cpu.Cycle();
+			cpu.VRegisters[0].Should().Be(0x55);
+		}
+
+		[TestMethod]
+		public void Op_Fx0A_WhenKeyPressed_ReturnsKeyValueInVx()
+		{
+			mem.SetByte(0x200, 0XF0);
+			mem.SetByte(0x201, 0x0A);
+			cpu.KeyState[0xE] = true;
+			cpu.Cycle();
+			cpu.VRegisters[0].Should().Be(0xE);
+			cpu.Pc.Should().NotBe(0x200);
+		}
+
+		[TestMethod]
+		public void Op_Fx0A_WhenKeyNotPressed_Waits()
+		{
+			mem.SetByte(0x200, 0XF0);
+			mem.SetByte(0x201, 0x0A);
+			cpu.Cycle();
+			cpu.Pc.Should().Be(0x200);
+		}
+
+		[TestMethod]
+		public void Op_Fx15_Ok()
+		{
+			mem.SetByte(0x200, 0XF0);
+			mem.SetByte(0x201, 0x15);
+			cpu.VRegisters[0] = 0x14;
+			cpu.delayTimer = 0x55;
+			cpu.Cycle();
+			cpu.delayTimer.Should().Be(0x14);
+		}
+
+		[TestMethod]
+		public void Op_Fx18_Ok()
+		{
+			mem.SetByte(0x200, 0XF0);
+			mem.SetByte(0x201, 0x18);
+			cpu.VRegisters[0] = 0x14;
+			cpu.soundTimer = 0x55;
+			cpu.Cycle();
+			cpu.soundTimer.Should().Be(0x14);
+		}
+
+		[TestMethod]
+		public void Op_Fx1E_Ok()
+		{
+			mem.SetByte(0x200, 0XF0);
+			mem.SetByte(0x201, 0x1E);
+			cpu.VRegisters[0] = 0x14;
+			cpu.Cycle();
+			cpu.IndexRegister.Should().Be(0x14);
+		}
+
+		[TestMethod]
+		public void Op_Fx29_Ok()
+		{
+			mem.SetByte(0x200, 0XF0);
+			mem.SetByte(0x201, 0x29);
+			cpu.VRegisters[0] = 0x14;
+			cpu.Cycle();
+			cpu.IndexRegister.Should().Be(0xB4);
 		}
 	}
 }
