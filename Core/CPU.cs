@@ -12,6 +12,7 @@ namespace Core
 		private const ushort StartAddress = 0x200;
 		private const int VideoWidth = 64;
 		private const int VideoHeight = 32;
+		private const byte SpriteColumns = 8;
 		private readonly Memory memory;
 		private readonly Stack16Levels stack;
 		private readonly Dictionary<ushort, ExecuteDel> generalFunctions = new Dictionary<ushort, ExecuteDel>();
@@ -21,7 +22,7 @@ namespace Core
 
 		private delegate void ExecuteDel();
 
-		internal ushort IndexRegister { get; private set; }
+		internal ushort IndexRegister { get; set; }
 
 		internal byte[] VRegisters { get; private set; } = new byte[16];
 		internal ushort Pc { get; private set; }
@@ -77,6 +78,9 @@ namespace Core
 			functionsF.Add(0x18, new ExecuteDel(Op_Fx18));
 			functionsF.Add(0x1E, new ExecuteDel(Op_Fx1E));
 			functionsF.Add(0x29, new ExecuteDel(Op_Fx29));
+			functionsF.Add(0x33, new ExecuteDel(Op_Fx33));
+			functionsF.Add(0x55, new ExecuteDel(Op_Fx55));
+			functionsF.Add(0x65, new ExecuteDel(Op_Fx65));
 		}
 
 		public void Initialize()
@@ -98,6 +102,12 @@ namespace Core
 
 			var function = Decode();
 			Execute(function);
+
+			if (delayTimer > 0)
+				delayTimer--;
+
+			if (soundTimer > 0)
+				soundTimer--;
 		}
 
 		private void Fetch()
@@ -438,7 +448,34 @@ namespace Core
 		/// </summary>
 		private void Op_Dxyn()
 		{
-			throw new NotImplementedException();
+			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
+			byte Vy = Convert.ToByte((Opcode & 0x00F0u) >> 4);
+			byte height = Convert.ToByte(Opcode & 0x000F);
+
+			// Wrap if going beyond screen boundaries
+			byte xPos = Convert.ToByte(VRegisters[Vx] % VideoWidth);
+			byte yPos = Convert.ToByte(VRegisters[Vy] % VideoHeight);
+
+			VRegisters[0xF] = 0;
+
+			for (byte row = 0; row < height; row++)
+			{
+				byte spriteByte = memory.GetByte((ushort)(IndexRegister + row));
+
+				for (byte col = 0; col < SpriteColumns; col++)
+				{
+					bool spritePixel = Convert.ToBoolean(spriteByte & (0x80u >> col));
+					bool isScreenPixelOn = VideoPixels[xPos + col, yPos + row];
+					if (spritePixel)
+					{
+						if (isScreenPixelOn)
+							VRegisters[0xF] = 1;
+
+						//Switch pixel
+						VideoPixels[xPos + col, yPos + row] = !VideoPixels[xPos + col, yPos + row];
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -532,9 +569,53 @@ namespace Core
 		private void Op_Fx29()
 		{
 			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
-			byte digit = VRegisters[Vx];
+			byte value = VRegisters[Vx];
 
-			IndexRegister = Convert.ToUInt16(Memory.FonsetStartAddress + (Memory.LetterSize * digit));
+			IndexRegister = Convert.ToUInt16(Memory.FonsetStartAddress + (Memory.LetterSize * value));
+		}
+
+		/// <summary>
+		/// LD B, Vx. Store BCD representation of Vx in memory locations I, I+1, and I+2.
+		/// </summary>
+		private void Op_Fx33()
+		{
+			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
+			byte value = VRegisters[Vx];
+
+			// Ones
+			memory.SetByte((ushort)(IndexRegister + 2), (byte)(value % 10));
+			value /= 10;
+
+			// Tens
+			memory.SetByte((ushort)(IndexRegister + 1), (byte)(value % 10));
+			value /= 10;
+
+			// Hundreds
+			memory.SetByte((IndexRegister), (byte)(value % 10));
+		}
+
+		/// <summary>
+		/// LD [I], Vx. Store registers V0 through Vx in memory starting at location I.
+		/// </summary>
+		private void Op_Fx55()
+		{
+			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
+			for (byte i = 0; i <= Vx; i++)
+			{
+				memory.SetByte((ushort)(IndexRegister + i), VRegisters[i]);
+			}
+		}
+
+		/// <summary>
+		/// LD Vx, [I]. Read registers V0 through Vx from memory starting at location I.
+		/// </summary>
+		private void Op_Fx65()
+		{
+			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
+			for (byte i = 0; i <= Vx; i++)
+			{
+				VRegisters[i] = memory.GetByte((ushort)(IndexRegister + i));
+			}
 		}
 
 		#endregion Functions

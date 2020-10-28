@@ -513,5 +513,68 @@ namespace UnitTests
 			cpu.Cycle();
 			cpu.IndexRegister.Should().Be(0xB4);
 		}
+
+		[TestMethod]
+		public void Op_Fx33_Ok()
+		{
+			mem.SetByte(0x200, 0XF0);
+			mem.SetByte(0x201, 0x33);
+			cpu.VRegisters[0] = 0xF1;
+			cpu.IndexRegister = 0x233;
+			cpu.Cycle();
+			cpu.IndexRegister.Should().Be(0x233);
+			mem.GetByte(0x233).Should().Be(0x2);
+			mem.GetByte(0x234).Should().Be(0x4);
+			mem.GetByte(0x235).Should().Be(0x1);
+		}
+
+		[TestMethod]
+		public void Op_Fx55_Ok()
+		{
+			mem.SetByte(0x200, 0XF4);
+			mem.SetByte(0x201, 0x55);
+			cpu.VRegisters[0] = 0xF1;
+			cpu.VRegisters[1] = 0xF2;
+			cpu.VRegisters[2] = 0xF3;
+			cpu.VRegisters[3] = 0xF4;
+			cpu.VRegisters[4] = 0xF5;
+			cpu.IndexRegister = 0x233;
+			cpu.Cycle();
+			cpu.IndexRegister.Should().Be(0x233);
+			mem.GetByte(0x233).Should().Be(0xF1);
+			mem.GetByte(0x234).Should().Be(0xF2);
+			mem.GetByte(0x235).Should().Be(0xF3);
+			mem.GetByte(0x236).Should().Be(0xF4);
+			mem.GetByte(0x237).Should().Be(0xF5);
+			for (ushort i = 0x238; i <= 0x242; i++)
+			{
+				mem.GetByte(i).Should().Be(0);
+			}
+		}
+
+		[TestMethod]
+		public void Op_Fx65_Ok()
+		{
+			mem.SetByte(0x200, 0XF4);
+			mem.SetByte(0x201, 0x65);
+			mem.SetByte(0x233, 0xF1);
+			mem.SetByte(0x234, 0xF2);
+			mem.SetByte(0x235, 0xF3);
+			mem.SetByte(0x236, 0xF4);
+			mem.SetByte(0x237, 0xF5);
+
+			cpu.IndexRegister = 0x233;
+			cpu.Cycle();
+			cpu.IndexRegister.Should().Be(0x233);
+			cpu.VRegisters[0].Should().Be(0xF1);
+			cpu.VRegisters[1].Should().Be(0xF2);
+			cpu.VRegisters[2].Should().Be(0xF3);
+			cpu.VRegisters[3].Should().Be(0xF4);
+			cpu.VRegisters[4].Should().Be(0xF5);
+			for (ushort i = 0x5; i < 0xF; i++)
+			{
+				cpu.VRegisters[i].Should().Be(0);
+			}
+		}
 	}
 }
