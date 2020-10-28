@@ -5,7 +5,7 @@ namespace Core
 	public class Stack16Levels
 	{
 		private const int MaxLevels = 16;
-		private ushort[] levels = new ushort[MaxLevels];
+		public ushort[] Levels { get; private set; } = new ushort[MaxLevels];
 		private int sp;
 
 		public void Skip()
@@ -22,7 +22,7 @@ namespace Core
 				throw new StackOverflowException();
 			else
 
-				levels[++sp] = value;
+				Levels[++sp] = value;
 		}
 
 		public ushort Pop()
@@ -30,18 +30,18 @@ namespace Core
 			if (sp == -1)
 				throw new InvalidOperationException("Stack is empty");
 			else
-				return levels[sp--];
+				return Levels[sp--];
 		}
 
 		public void Clear()
 		{
-			levels = new ushort[MaxLevels];
+			Levels = new ushort[MaxLevels];
 			sp = -1;
 		}
 
 		internal ushort Peek()
 		{
-			return levels[sp];
+			return Levels[sp];
 		}
 	}
 }

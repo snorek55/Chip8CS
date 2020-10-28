@@ -11,7 +11,7 @@ namespace UnitTests
 	[TestClass]
 	public class CPUTests
 	{
-		private CPU cpu;
+		private Cpu cpu;
 		private Memory mem;
 		private Stack16Levels stack;
 
@@ -20,7 +20,7 @@ namespace UnitTests
 		{
 			mem = new Memory();
 			stack = new Stack16Levels();
-			cpu = new CPU(mem, stack);
+			cpu = new Cpu(mem, stack);
 		}
 
 		[TestMethod]
@@ -71,7 +71,7 @@ namespace UnitTests
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X01);
 
-			stack.Peek().Should().Be(0);
+			stack.Peek().Should().Be(0x202);
 		}
 
 		[TestMethod]
@@ -402,7 +402,7 @@ namespace UnitTests
 		public void Op_ExE9_WhenKeyPressed_Skips()
 		{
 			mem.SetByte(0x200, 0XE0);
-			mem.SetByte(0x201, 0xE9);
+			mem.SetByte(0x201, 0x9E);
 			cpu.VRegisters[0] = 0x4;
 			cpu.KeyState[4] = true;
 			cpu.Cycle();
@@ -413,7 +413,7 @@ namespace UnitTests
 		public void Op_ExE9_WhenKeyNotPressed_DoesNothing()
 		{
 			mem.SetByte(0x200, 0XE0);
-			mem.SetByte(0x201, 0xE9);
+			mem.SetByte(0x201, 0x9E);
 			cpu.VRegisters[0] = 0x4;
 			cpu.KeyState[4] = false;
 			cpu.Cycle();
@@ -447,7 +447,7 @@ namespace UnitTests
 		{
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x07);
-			cpu.delayTimer = 0x55;
+			cpu.DelayTimer = 0x55;
 			cpu.Cycle();
 			cpu.VRegisters[0].Should().Be(0x55);
 		}
@@ -478,9 +478,9 @@ namespace UnitTests
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x15);
 			cpu.VRegisters[0] = 0x14;
-			cpu.delayTimer = 0x55;
+			cpu.DelayTimer = 0x55;
 			cpu.Cycle();
-			cpu.delayTimer.Should().Be(0x14);
+			cpu.DelayTimer.Should().Be(0x13);
 		}
 
 		[TestMethod]
@@ -489,9 +489,9 @@ namespace UnitTests
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x18);
 			cpu.VRegisters[0] = 0x14;
-			cpu.soundTimer = 0x55;
+			cpu.SoundTimer = 0x55;
 			cpu.Cycle();
-			cpu.soundTimer.Should().Be(0x14);
+			cpu.SoundTimer.Should().Be(0x13);
 		}
 
 		[TestMethod]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Core
 {
@@ -28,6 +29,8 @@ namespace Core
 
 		public static readonly ushort FonsetStartAddress = 0x50;
 
+		public static readonly ushort GameStartAddress = 0x200;
+
 		private const ushort MaxBytes = 4096;
 
 		private byte[] bytes = new byte[MaxBytes];
@@ -43,6 +46,19 @@ namespace Core
 
 			for (int i = 0; i < 80; ++i)
 				bytes[i + FonsetStartAddress] = Fontset[i];
+		}
+
+		public void LoadRom(string path)
+		{
+			if (!File.Exists(path))
+				throw new InvalidOperationException("Path does not exist");
+
+			var gameBytes = File.ReadAllBytes(path);
+
+			for (int i = 0; i < gameBytes.Length; i++)
+			{
+				bytes[GameStartAddress + i] = gameBytes[i];
+			}
 		}
 
 		public byte GetByte(ushort pos)

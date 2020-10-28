@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 namespace Core
 {
 	//Info from https://austinmorlan.com/posts/chip8_emulator/
-	public class CPU
+	public class Cpu
 	{
 		private const ushort StartAddress = 0x200;
 		private const int VideoWidth = 64;
@@ -22,17 +22,17 @@ namespace Core
 
 		private delegate void ExecuteDel();
 
-		internal ushort IndexRegister { get; set; }
+		public ushort IndexRegister { get; internal set; }
 
-		internal byte[] VRegisters { get; private set; } = new byte[16];
-		internal ushort Pc { get; private set; }
-		internal ushort Opcode { get; private set; }
-		internal bool[,] VideoPixels { get; private set; } = new bool[VideoWidth, VideoHeight];
+		public byte[] VRegisters { get; private set; } = new byte[16];
+		public ushort Pc { get; private set; }
+		public ushort Opcode { get; private set; }
+		public bool[,] VideoPixels { get; private set; } = new bool[VideoWidth, VideoHeight];
 		internal bool[] KeyState = new bool[0xF];
-		internal byte delayTimer { get; set; }
-		internal byte soundTimer { get; set; }
+		public byte DelayTimer { get; internal set; }
+		public byte SoundTimer { get; internal set; }
 
-		public CPU(Memory memory, Stack16Levels stack)
+		public Cpu(Memory memory, Stack16Levels stack)
 		{
 			this.memory = memory;
 			this.stack = stack;
@@ -92,8 +92,8 @@ namespace Core
 			IndexRegister = 0;
 			Pc = StartAddress;
 			Opcode = 0;
-			delayTimer = 0;
-			soundTimer = 0;
+			DelayTimer = 0;
+			SoundTimer = 0;
 		}
 
 		public void Cycle()
@@ -103,11 +103,11 @@ namespace Core
 			var function = Decode();
 			Execute(function);
 
-			if (delayTimer > 0)
-				delayTimer--;
+			if (DelayTimer > 0)
+				DelayTimer--;
 
-			if (soundTimer > 0)
-				soundTimer--;
+			if (SoundTimer > 0)
+				SoundTimer--;
 		}
 
 		private void Fetch()
@@ -160,12 +160,12 @@ namespace Core
 		{
 			var lsb = Convert.ToByte(Opcode & 0xFF);
 
-			if (lsb == 0xE9)
+			if (lsb == 0x9E)
 				Op_Ex9E();
 			else if (lsb == 0xA1)
 				Op_ExA1();
 			else
-				throw new ArgumentException($"Such function8 not found {Opcode:X}");
+				throw new ArgumentException($"Such functionE not found {Opcode:X}");
 		}
 
 		private void Op_Fxyn()
@@ -211,7 +211,7 @@ namespace Core
 			var address = Convert.ToUInt16(Opcode & 0x0FFFu);
 
 			stack.Push(Pc);
-			stack.Skip();
+			//stack.Skip();
 			Pc = address;
 		}
 
@@ -465,7 +465,9 @@ namespace Core
 				for (byte col = 0; col < SpriteColumns; col++)
 				{
 					bool spritePixel = Convert.ToBoolean(spriteByte & (0x80u >> col));
-					bool isScreenPixelOn = VideoPixels[xPos + col, yPos + row];
+					var screenXPos = Convert.ToByte((xPos + col) % VideoWidth);
+					var screenYPos = Convert.ToByte((yPos + row) % VideoHeight);
+					bool isScreenPixelOn = VideoPixels[screenXPos, screenYPos];
 					if (spritePixel)
 					{
 						if (isScreenPixelOn)
@@ -511,7 +513,7 @@ namespace Core
 		{
 			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
 
-			VRegisters[Vx] = delayTimer;
+			VRegisters[Vx] = DelayTimer;
 		}
 
 		/// <summary>
@@ -540,7 +542,7 @@ namespace Core
 		{
 			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
 
-			delayTimer = VRegisters[Vx];
+			DelayTimer = VRegisters[Vx];
 		}
 
 		/// <summary>
@@ -550,7 +552,7 @@ namespace Core
 		{
 			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
 
-			soundTimer = VRegisters[Vx];
+			SoundTimer = VRegisters[Vx];
 		}
 
 		/// <summary>
