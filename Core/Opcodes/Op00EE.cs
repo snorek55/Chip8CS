@@ -8,7 +8,7 @@
 
 		public override string ToString()
 		{
-			return $"RET";
+			return $"{base.ToString()} RET";
 		}
 
 		public override void Execute(Cpu cpu)

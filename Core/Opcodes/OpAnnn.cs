@@ -13,7 +13,7 @@ namespace Core.Opcodes
 
 		public override string ToString()
 		{
-			return $"LD  I, {Address.ToString(WordFormat)}";
+			return $"{base.ToString()} LD  I, {Address.ToString(WordFormat)}";
 		}
 
 		public override void Execute(Cpu cpu)

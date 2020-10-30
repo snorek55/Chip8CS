@@ -13,7 +13,7 @@ namespace Core.Opcodes
 
 		public override string ToString()
 		{
-			return $"SKNP V[{Vx.ToString(ByteFormat)}]";
+			return $"{base.ToString()} SKNP V[{Vx.ToString(ByteFormat)}]";
 		}
 
 		public override void Execute(Cpu cpu)

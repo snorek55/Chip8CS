@@ -10,7 +10,7 @@ namespace Core
 		private delegate BaseOp ExecuteDel();
 
 		private readonly Dictionary<byte, ExecuteDel> generalFunctions = new Dictionary<byte, ExecuteDel>();
-		private readonly Dictionary<byte, BaseOp> functions0 = new Dictionary<byte, BaseOp>();
+		private readonly Dictionary<byte, ExecuteDel> functions0 = new Dictionary<byte, ExecuteDel>();
 		private readonly Dictionary<byte, ExecuteDel> functions8 = new Dictionary<byte, ExecuteDel>();
 		private readonly Dictionary<byte, ExecuteDel> functionsF = new Dictionary<byte, ExecuteDel>();
 
@@ -26,16 +26,21 @@ namespace Core
 			var list = new List<BaseOp>();
 			for (int i = 0; i < gameBytes.Length; i++)
 			{
+				var pos = Memory.GameStartAddress + i;
 				var msb = gameBytes[i];
 				var lsb = gameBytes[++i];
 				CurrentOp = Convert.ToUInt16((msb << 8) | lsb);
 
 				var generalOp = (byte)((msb & 0xF0) >> 4);
 
+				BaseOp op = null;
 				if (generalFunctions.ContainsKey(generalOp))
-					list.Add(generalFunctions[generalOp].Invoke());
+					op = generalFunctions[generalOp].Invoke();
 				else
-					list.Add(new OpUnknown(CurrentOp));
+					op = new OpUnknown(CurrentOp);
+
+				op.Pos = pos;
+				list.Add(op);
 			}
 
 			return list.ToArray();
@@ -60,8 +65,8 @@ namespace Core
 			generalFunctions.Add(0xE, new ExecuteDel(Op_Exyn));
 			generalFunctions.Add(0xF, new ExecuteDel(Op_Fxyn));
 
-			functions0.Add(0x0, new Op00E0(CurrentOp));
-			functions0.Add(0xE, new Op00EE(CurrentOp));
+			functions0.Add(0x0, new ExecuteDel(() => { return new Op00E0(CurrentOp); }));
+			functions0.Add(0xE, new ExecuteDel(() => { return new Op00EE(CurrentOp); }));
 
 			functions8.Add(0x0, new ExecuteDel(() => { return new Op8xy0(CurrentOp); }));
 			functions8.Add(0x1, new ExecuteDel(() => { return new Op8xy1(CurrentOp); }));
@@ -90,7 +95,7 @@ namespace Core
 		{
 			var specialCode = Convert.ToByte(CurrentOp & 0x000Fu);
 			if (functions0.ContainsKey(specialCode))
-				return functions0[specialCode];
+				return functions0[specialCode].Invoke();
 			else
 				return new OpUnknown(CurrentOp);
 		}

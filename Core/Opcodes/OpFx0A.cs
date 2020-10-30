@@ -13,7 +13,7 @@ namespace Core.Opcodes
 
 		public override string ToString()
 		{
-			return $"LD V[{Vx.ToString(ByteFormat)}], K";
+			return $"{base.ToString()} LD V[{Vx.ToString(ByteFormat)}], K";
 		}
 
 		public override void Execute(Cpu cpu)

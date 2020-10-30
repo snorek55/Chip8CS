@@ -8,7 +8,7 @@
 
 		public override string ToString()
 		{
-			return $"CLS";
+			return $"{base.ToString()} CLS";
 		}
 
 		public override void Execute(Cpu cpu)

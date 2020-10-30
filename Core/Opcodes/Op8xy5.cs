@@ -15,7 +15,7 @@ namespace Core.Opcodes
 
 		public override string ToString()
 		{
-			return $"SUB V[{Vx.ToString(ByteFormat)}], V[{Vy.ToString(ByteFormat)}]";
+			return $"{base.ToString()} SUB V[{Vx.ToString(ByteFormat)}], V[{Vy.ToString(ByteFormat)}]";
 		}
 
 		public override void Execute(Cpu cpu)

@@ -14,7 +14,7 @@
 
 		public override string ToString()
 		{
-			return $"Unkown opcode = {Op.ToString(WordFormat)}";
+			return $"{base.ToString()} UNKOWN: {Op.ToString(WordFormat)}";
 		}
 	}
 }

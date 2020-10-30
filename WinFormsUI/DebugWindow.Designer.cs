@@ -221,6 +221,7 @@
 			this.Name = "DebugWindow";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Debug";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugWindow_FormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.pbGame)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
