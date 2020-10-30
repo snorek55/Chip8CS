@@ -10,24 +10,25 @@ namespace Core
 	public class Cpu
 	{
 		private const ushort StartAddress = 0x200;
-		private const int VideoWidth = 64;
-		private const int VideoHeight = 32;
+		internal const int VideoWidth = 64;
+		internal const int VideoHeight = 32;
 		private const byte SpriteColumns = 8;
 		private readonly Memory memory;
-		private readonly Stack16Levels stack;
-		private readonly Dictionary<ushort, ExecuteDel> generalFunctions = new Dictionary<ushort, ExecuteDel>();
-		private readonly Dictionary<ushort, ExecuteDel> functions0 = new Dictionary<ushort, ExecuteDel>();
-		private readonly Dictionary<ushort, ExecuteDel> functions8 = new Dictionary<ushort, ExecuteDel>();
-		private readonly Dictionary<ushort, ExecuteDel> functionsF = new Dictionary<ushort, ExecuteDel>();
+
+		private readonly Dictionary<byte, ExecuteDel> generalFunctions = new Dictionary<byte, ExecuteDel>();
+		private readonly Dictionary<byte, ExecuteDel> functions0 = new Dictionary<byte, ExecuteDel>();
+		private readonly Dictionary<byte, ExecuteDel> functions8 = new Dictionary<byte, ExecuteDel>();
+		private readonly Dictionary<byte, ExecuteDel> functionsF = new Dictionary<byte, ExecuteDel>();
 
 		private delegate void ExecuteDel();
 
+		internal Stack16Levels Stack { get; private set; }
 		public ushort IndexRegister { get; internal set; }
 
 		public byte[] VRegisters { get; private set; } = new byte[16];
-		public ushort Pc { get; private set; }
+		public ushort Pc { get; internal set; }
 		public ushort Opcode { get; private set; }
-		public bool[,] VideoPixels { get; private set; } = new bool[VideoWidth, VideoHeight];
+		public bool[,] VideoPixels { get; internal set; } = new bool[VideoWidth, VideoHeight];
 		internal bool[] KeyState = new bool[0xF];
 		public byte DelayTimer { get; internal set; }
 		public byte SoundTimer { get; internal set; }
@@ -35,7 +36,7 @@ namespace Core
 		public Cpu(Memory memory, Stack16Levels stack)
 		{
 			this.memory = memory;
-			this.stack = stack;
+			this.Stack = stack;
 			InitializeFunctions();
 			Initialize();
 		}
@@ -86,7 +87,7 @@ namespace Core
 		public void Initialize()
 		{
 			memory.Initialize();
-			stack.Clear();
+			Stack.Clear();
 			VRegisters = new byte[16];
 			VideoPixels = new bool[64, 32];
 			IndexRegister = 0;
@@ -124,7 +125,7 @@ namespace Core
 
 		private ExecuteDel Decode()
 		{
-			var generalOpcode = Convert.ToUInt16((Opcode & 0xF000u) >> 12);
+			var generalOpcode = Convert.ToByte((Opcode & 0xF000u) >> 12);
 			if (generalFunctions.ContainsKey(generalOpcode))
 				return generalFunctions[generalOpcode];
 			else
@@ -140,7 +141,7 @@ namespace Core
 
 		private void Op_0nnn()
 		{
-			var specialCode = Convert.ToUInt16(Opcode & 0x000Fu);
+			var specialCode = Convert.ToByte(Opcode & 0x000Fu);
 			if (functions0.ContainsKey(specialCode))
 				functions0[specialCode].Invoke();
 			else
@@ -149,7 +150,7 @@ namespace Core
 
 		private void Op_8xyn()
 		{
-			var specialCode = Convert.ToUInt16(Opcode & 0x000Fu);
+			var specialCode = Convert.ToByte(Opcode & 0x000Fu);
 			if (functions8.ContainsKey(specialCode))
 				functions8[specialCode].Invoke();
 			else
@@ -170,7 +171,7 @@ namespace Core
 
 		private void Op_Fxyn()
 		{
-			var specialCode = Convert.ToUInt16(Opcode & 0x00FFu);
+			var specialCode = Convert.ToByte(Opcode & 0x00FFu);
 			if (functionsF.ContainsKey(specialCode))
 				functionsF[specialCode].Invoke();
 			else
@@ -190,7 +191,7 @@ namespace Core
 		/// </summary>
 		private void Op_00EE()
 		{
-			Pc = stack.Pop();
+			Pc = Stack.Pop();
 		}
 
 		/// <summary>
@@ -210,7 +211,7 @@ namespace Core
 		{
 			var address = Convert.ToUInt16(Opcode & 0x0FFFu);
 
-			stack.Push(Pc);
+			Stack.Push(Pc);
 			//stack.Skip();
 			Pc = address;
 		}

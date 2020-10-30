@@ -7,6 +7,8 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 
+using Disassembler = Core.Disassembler;
+
 namespace WinFormsUI
 {
 	public partial class DebugWindow : Form
@@ -14,6 +16,8 @@ namespace WinFormsUI
 		private Cpu Cpu;
 		private Memory mem;
 		private Stack16Levels stack;
+
+		private Disassembler disassembler = new Disassembler();
 
 		private bool requestedStop;
 
@@ -23,7 +27,9 @@ namespace WinFormsUI
 			mem = new Memory();
 			stack = new Stack16Levels();
 			Cpu = new Cpu(mem, stack);
-			InitializeGameInstructions();
+			disassembler.LoadRom(Application.StartupPath + "PONG");
+			lstbOpcodes.DataSource = disassembler.Opcodes;
+			//InitializeGameInstructions();
 		}
 
 		private void Initialize()
