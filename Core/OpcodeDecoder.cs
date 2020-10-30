@@ -58,7 +58,7 @@ namespace Core
 			generalFunctions.Add(0xC, new ExecuteDel(() => { return new OpCxkk(CurrentOp); }));
 			generalFunctions.Add(0xD, new ExecuteDel(() => { return new OpDxyn(CurrentOp); }));
 			generalFunctions.Add(0xE, new ExecuteDel(Op_Exyn));
-			//generalFunctions.Add(0xF, new ExecuteDel(Op_Fxyn));
+			generalFunctions.Add(0xF, new ExecuteDel(Op_Fxyn));
 
 			functions0.Add(0x0, new Op00E0(CurrentOp));
 			functions0.Add(0xE, new Op00EE(CurrentOp));
@@ -73,18 +73,18 @@ namespace Core
 			functions8.Add(0x7, new ExecuteDel(() => { return new Op8xy7(CurrentOp); }));
 			functions8.Add(0xE, new ExecuteDel(() => { return new Op8xyE(CurrentOp); }));
 
-			//functionsF.Add(0x7, new ExecuteDel(Op_Fx07));
-			//functionsF.Add(0xA, new ExecuteDel(Op_Fx0A));
-			//functionsF.Add(0x15, new ExecuteDel(Op_Fx15));
-			//functionsF.Add(0x18, new ExecuteDel(Op_Fx18));
-			//functionsF.Add(0x1E, new ExecuteDel(Op_Fx1E));
-			//functionsF.Add(0x29, new ExecuteDel(Op_Fx29));
-			//functionsF.Add(0x33, new ExecuteDel(Op_Fx33));
-			//functionsF.Add(0x55, new ExecuteDel(Op_Fx55));
-			//functionsF.Add(0x65, new ExecuteDel(Op_Fx65));
+			functionsF.Add(0x7, new ExecuteDel(() => { return new OpFx07(CurrentOp); }));
+			functionsF.Add(0xA, new ExecuteDel(() => { return new OpFx0A(CurrentOp); }));
+			functionsF.Add(0x15, new ExecuteDel(() => { return new OpFx15(CurrentOp); }));
+			functionsF.Add(0x18, new ExecuteDel(() => { return new OpFx18(CurrentOp); }));
+			functionsF.Add(0x1E, new ExecuteDel(() => { return new OpFx1E(CurrentOp); }));
+			functionsF.Add(0x29, new ExecuteDel(() => { return new OpFx29(CurrentOp); }));
+			functionsF.Add(0x33, new ExecuteDel(() => { return new OpFx33(CurrentOp); }));
+			functionsF.Add(0x55, new ExecuteDel(() => { return new OpFx55(CurrentOp); }));
+			functionsF.Add(0x65, new ExecuteDel(() => { return new OpFx65(CurrentOp); }));
 		}
 
-		#region Functions
+		#region Special Functions
 
 		private BaseOp Op_0nnn()
 		{
@@ -113,18 +113,18 @@ namespace Core
 			else if (lsb == 0xA1)
 				return new OpExA1(CurrentOp);
 			else
-				throw new ArgumentException($"Such functionE not found {CurrentOp:X}");
+				return new OpUnknown(CurrentOp);
 		}
 
-		//private void Op_Fxyn()
-		//{
-		//	var specialCode = Convert.ToByte(Opcode & 0x00FFu);
-		//	if (functionsF.ContainsKey(specialCode))
-		//		functionsF[specialCode].Invoke();
-		//	else
-		//		throw new ArgumentException($"Such function8 not found {Opcode:X}");
-		//}
+		private BaseOp Op_Fxyn()
+		{
+			var specialCode = Convert.ToByte(CurrentOp & 0x00FFu);
+			if (functionsF.ContainsKey(specialCode))
+				return functionsF[specialCode].Invoke();
+			else
+				return new OpUnknown(CurrentOp);
+		}
 
-		#endregion Functions
+		#endregion Special Functions
 	}
 }
