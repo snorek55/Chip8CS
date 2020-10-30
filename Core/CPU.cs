@@ -12,8 +12,8 @@ namespace Core
 		private const ushort StartAddress = 0x200;
 		internal const int VideoWidth = 64;
 		internal const int VideoHeight = 32;
-		private const byte SpriteColumns = 8;
-		private readonly Memory memory;
+		internal const byte SpriteColumns = 8;
+		internal Memory Memory { get; private set; }
 
 		private readonly Dictionary<byte, ExecuteDel> generalFunctions = new Dictionary<byte, ExecuteDel>();
 		private readonly Dictionary<byte, ExecuteDel> functions0 = new Dictionary<byte, ExecuteDel>();
@@ -35,7 +35,7 @@ namespace Core
 
 		public Cpu(Memory memory, Stack16Levels stack)
 		{
-			this.memory = memory;
+			this.Memory = memory;
 			this.Stack = stack;
 			InitializeFunctions();
 			Initialize();
@@ -86,7 +86,7 @@ namespace Core
 
 		public void Initialize()
 		{
-			memory.Initialize();
+			Memory.Initialize();
 			Stack.Clear();
 			VRegisters = new byte[16];
 			VideoPixels = new bool[64, 32];
@@ -113,9 +113,9 @@ namespace Core
 
 		private void Fetch()
 		{
-			var msb = memory.GetByte(Pc);
+			var msb = Memory.GetByte(Pc);
 			Pc++;
-			var lsb = memory.GetByte(Pc);
+			var lsb = Memory.GetByte(Pc);
 			Pc++;
 			uint op = msb;
 			op = op << 8;
@@ -461,7 +461,7 @@ namespace Core
 
 			for (byte row = 0; row < height; row++)
 			{
-				byte spriteByte = memory.GetByte((ushort)(IndexRegister + row));
+				byte spriteByte = Memory.GetByte((ushort)(IndexRegister + row));
 
 				for (byte col = 0; col < SpriteColumns; col++)
 				{
@@ -586,15 +586,15 @@ namespace Core
 			byte value = VRegisters[Vx];
 
 			// Ones
-			memory.SetByte((ushort)(IndexRegister + 2), (byte)(value % 10));
+			Memory.SetByte((ushort)(IndexRegister + 2), (byte)(value % 10));
 			value /= 10;
 
 			// Tens
-			memory.SetByte((ushort)(IndexRegister + 1), (byte)(value % 10));
+			Memory.SetByte((ushort)(IndexRegister + 1), (byte)(value % 10));
 			value /= 10;
 
 			// Hundreds
-			memory.SetByte((IndexRegister), (byte)(value % 10));
+			Memory.SetByte((IndexRegister), (byte)(value % 10));
 		}
 
 		/// <summary>
@@ -605,7 +605,7 @@ namespace Core
 			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
 			for (byte i = 0; i <= Vx; i++)
 			{
-				memory.SetByte((ushort)(IndexRegister + i), VRegisters[i]);
+				Memory.SetByte((ushort)(IndexRegister + i), VRegisters[i]);
 			}
 		}
 
@@ -617,7 +617,7 @@ namespace Core
 			byte Vx = Convert.ToByte((Opcode & 0x0F00u) >> 8);
 			for (byte i = 0; i <= Vx; i++)
 			{
-				VRegisters[i] = memory.GetByte((ushort)(IndexRegister + i));
+				VRegisters[i] = Memory.GetByte((ushort)(IndexRegister + i));
 			}
 		}
 

@@ -2,8 +2,6 @@
 {
 	public class OpUnknown : BaseOp
 	{
-		public ushort Op { get; set; }
-
 		public OpUnknown(ushort op) : base(op)
 		{
 			Op = op;
@@ -16,7 +14,7 @@
 
 		public override string ToString()
 		{
-			return $"Unkown opcode = {Op.ToString(OpFormat)}";
+			return $"Unkown opcode = {Op.ToString(WordFormat)}";
 		}
 	}
 }

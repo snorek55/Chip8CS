@@ -4,7 +4,9 @@
 	{
 		public ushort Op { get; set; }
 
-		public const string OpFormat = "X4";
+		public const string WordFormat = "X4";
+
+		public const string ByteFormat = "X1";
 
 		protected BaseOp(ushort op)
 		{

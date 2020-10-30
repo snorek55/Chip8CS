@@ -2,23 +2,23 @@
 
 namespace Core.Opcodes
 {
-	public class Op1nnn : BaseOp
+	public class OpBnnn : BaseOp
 	{
 		public ushort Address { get; set; }
 
-		public Op1nnn(ushort op) : base(op)
+		public OpBnnn(ushort op) : base(op)
 		{
 			Address = Convert.ToUInt16(op & 0x0FFFu);
 		}
 
 		public override string ToString()
 		{
-			return $"JP {Address.ToString(WordFormat)}";
+			return $"JP V0, {Address.ToString(WordFormat)}";
 		}
 
 		public override void Execute(Cpu cpu)
 		{
-			cpu.Pc = Address;
+			cpu.Pc = Convert.ToUInt16(cpu.VRegisters[0] + Address);
 		}
 	}
 }
