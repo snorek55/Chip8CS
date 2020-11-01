@@ -16,7 +16,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} LD  I, {Address.ToString(WordFormat)}";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			cpu.IndexRegister = Address;
 		}

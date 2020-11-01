@@ -7,7 +7,7 @@
 			Op = op;
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			//Do nothing
 		}

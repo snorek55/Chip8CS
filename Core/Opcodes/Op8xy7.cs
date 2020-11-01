@@ -18,7 +18,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} SUBN V[{Vx.ToString(ByteFormat)}], V[{Vy.ToString(ByteFormat)}]";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			if (cpu.VRegisters[Vy] > cpu.VRegisters[Vx])
 				cpu.VRegisters[0xF] = 1;

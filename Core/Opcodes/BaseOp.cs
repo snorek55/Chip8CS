@@ -1,4 +1,6 @@
-﻿namespace Core.Opcodes
+﻿using System;
+
+namespace Core.Opcodes
 {
 	public abstract class BaseOp
 	{
@@ -14,11 +16,18 @@
 			Op = op;
 		}
 
-		public abstract void Execute(Cpu cpu);
+		internal abstract void Execute(Cpu cpu);
+
+		public byte[] ToBytes()
+		{
+			var msb = Convert.ToByte((Op & 0xFF00) >> 8);
+			var lsb = Convert.ToByte(Op & 0x00FF);
+			return new byte[] { msb, lsb };
+		}
 
 		public override string ToString()
 		{
-			return $"${Pos.ToString(WordFormat)} -";
+			return $"${Pos.ToString(WordFormat)} ({Op.ToString(WordFormat)}) -";
 		}
 	}
 }

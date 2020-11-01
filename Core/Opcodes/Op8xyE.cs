@@ -18,7 +18,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} SHL V[{Vx.ToString(ByteFormat)}]{{, V[{Vy.ToString(ByteFormat)}]}}";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			// Save MSB in VF
 			cpu.VRegisters[0xF] = Convert.ToByte((cpu.VRegisters[Vx] & 0x80) >> 7);

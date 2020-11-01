@@ -16,7 +16,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} LD V[{Vx.ToString(ByteFormat)}], K";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			for (int i = 0; i < cpu.KeyState.Length; i++)
 			{

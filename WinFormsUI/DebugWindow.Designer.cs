@@ -148,7 +148,7 @@
 			// 
 			// btInitialize
 			// 
-			this.btInitialize.Location = new System.Drawing.Point(443, 12);
+			this.btInitialize.Location = new System.Drawing.Point(624, 10);
 			this.btInitialize.Name = "btInitialize";
 			this.btInitialize.Size = new System.Drawing.Size(75, 23);
 			this.btInitialize.TabIndex = 5;
@@ -158,7 +158,7 @@
 			// 
 			// btCycle
 			// 
-			this.btCycle.Location = new System.Drawing.Point(443, 45);
+			this.btCycle.Location = new System.Drawing.Point(624, 43);
 			this.btCycle.Name = "btCycle";
 			this.btCycle.Size = new System.Drawing.Size(75, 23);
 			this.btCycle.TabIndex = 5;
@@ -168,7 +168,7 @@
 			// 
 			// btRun
 			// 
-			this.btRun.Location = new System.Drawing.Point(443, 74);
+			this.btRun.Location = new System.Drawing.Point(624, 72);
 			this.btRun.Name = "btRun";
 			this.btRun.Size = new System.Drawing.Size(75, 23);
 			this.btRun.TabIndex = 5;
@@ -178,7 +178,7 @@
 			// 
 			// btStop
 			// 
-			this.btStop.Location = new System.Drawing.Point(524, 74);
+			this.btStop.Location = new System.Drawing.Point(705, 72);
 			this.btStop.Name = "btStop";
 			this.btStop.Size = new System.Drawing.Size(75, 23);
 			this.btStop.TabIndex = 6;

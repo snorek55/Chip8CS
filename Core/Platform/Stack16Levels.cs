@@ -2,7 +2,7 @@
 
 namespace Core
 {
-	public class Stack16Levels
+	internal class Stack16Levels
 	{
 		private const int MaxLevels = 16;
 		public ushort[] Levels { get; private set; } = new ushort[MaxLevels];

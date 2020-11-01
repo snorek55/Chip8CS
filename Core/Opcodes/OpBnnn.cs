@@ -16,7 +16,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} JP V0, {Address.ToString(WordFormat)}";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			cpu.Pc = Convert.ToUInt16(cpu.VRegisters[0] + Address);
 		}

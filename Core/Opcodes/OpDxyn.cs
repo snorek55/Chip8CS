@@ -11,7 +11,7 @@ namespace Core.Opcodes
 		public OpDxyn(ushort op) : base(op)
 		{
 			Vx = Convert.ToByte((op & 0x0F00u) >> 8);
-			Vy = Convert.ToByte(op & 0x00FFu);
+			Vy = Convert.ToByte((op & 0x00F0u) >> 4);
 			Height = Convert.ToByte(op & 0x000F);
 		}
 
@@ -20,7 +20,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} DRW V[{Vx.ToString(ByteFormat)}], V[{Vy.ToString(ByteFormat)}], {Height.ToString(ByteFormat)}";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			// Wrap if going beyond screen boundaries
 			byte xPos = Convert.ToByte(cpu.VRegisters[Vx] % Cpu.VideoWidth);
@@ -30,7 +30,7 @@ namespace Core.Opcodes
 
 			for (byte row = 0; row < Height; row++)
 			{
-				byte spriteByte = cpu.Memory.GetByte((ushort)(cpu.IndexRegister + row));
+				byte spriteByte = cpu.Memory.GetByte(Convert.ToUInt16(cpu.IndexRegister + row));
 
 				for (byte col = 0; col < Cpu.SpriteColumns; col++)
 				{

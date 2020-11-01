@@ -16,7 +16,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} LD V[{Vx.ToString(ByteFormat)}], DT";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			cpu.VRegisters[Vx] = cpu.DelayTimer;
 		}

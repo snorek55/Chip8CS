@@ -16,7 +16,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} SKP V[{Vx.ToString(ByteFormat)}]";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			byte key = cpu.VRegisters[Vx];
 

@@ -21,6 +21,21 @@ namespace Core
 			InitializeFunctions();
 		}
 
+		internal BaseOp DecodeOp(byte msb,byte lsb)
+		{
+			CurrentOp = Convert.ToUInt16((msb << 8) | lsb);
+
+			var generalOp = (byte)((msb & 0xF0) >> 4);
+
+			BaseOp op = null;
+			if (generalFunctions.ContainsKey(generalOp))
+				op = generalFunctions[generalOp].Invoke();
+			else
+				op = new OpUnknown(CurrentOp);
+
+			return op;
+		}
+
 		internal BaseOp[] Decode(byte[] gameBytes)
 		{
 			var list = new List<BaseOp>();

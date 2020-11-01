@@ -18,7 +18,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} AND V[{Vx.ToString(ByteFormat)}], V[{Vy.ToString(ByteFormat)}]";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			cpu.VRegisters[Vx] &= cpu.VRegisters[Vy];
 		}

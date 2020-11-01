@@ -11,7 +11,7 @@
 			return $"{base.ToString()} CLS";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			cpu.VideoPixels = new bool[Cpu.VideoWidth, Cpu.VideoHeight];
 		}

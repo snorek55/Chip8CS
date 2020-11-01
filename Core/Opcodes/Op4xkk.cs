@@ -18,7 +18,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} SNE V[{Vx.ToString(ByteFormat)}], {Value.ToString(ByteFormat)}";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			if (cpu.VRegisters[Vx] != Value)
 				cpu.Pc += 2;

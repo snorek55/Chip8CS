@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Reflection.Emit;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -17,48 +18,45 @@ namespace WinFormsUI
 		public DebugWindow()
 		{
 			InitializeComponent();
-			disassembler.LoadRom(Application.StartupPath + "PONG");
-			lstbOpcodes.DataSource = disassembler.Opcodes;
 		}
 
 		private void Initialize()
 		{
-			disassembler.cpu.Initialize();
-			disassembler.mem.LoadRom(Application.StartupPath + @"PONG");
+			disassembler.LoadRom(Application.StartupPath + "PONG");
+			lstbOpcodes.DataSource = disassembler.Opcodes;
 			UpdateDebugInfo();
 		}
 
 		private void UpdateDebugInfo()
 		{
-			lblIndexRegister.Text = disassembler.cpu.IndexRegister.ToString("X4");
-			lblOpcode.Text = disassembler.cpu.Opcode.ToString("X4");
-			lblPc.Text = disassembler.cpu.Pc.ToString("X4");
+			var info = disassembler.Info;
+			lblIndexRegister.Text = info.IndexRegister.ToString("X3");
+			lblOpcode.Text = info.Opcode?.ToString();
+			lblPc.Text = info.Pc.ToString("X3");
 
 			lstbStack.Items.Clear();
 			var i = 0;
-			foreach (var level in disassembler.stack.Levels)
+			foreach (var level in info.StackLevels)
 			{
-				lstbStack.Items.Add(i.ToString("X4") + " - " + level.ToString("X4"));
+				lstbStack.Items.Add(i.ToString("X") + " - " + level.ToString("X"));
 				i++;
 			}
 
 			lstbVRegisters.Items.Clear();
 			i = 0;
-			foreach (var reg in disassembler.cpu.VRegisters)
+			foreach (var reg in info.VRegisters)
 			{
-				lstbVRegisters.Items.Add(i.ToString("X4") + " - " + reg.ToString("X4"));
+				lstbVRegisters.Items.Add(i.ToString("X") + " - " + reg.ToString("X"));
 
 				i++;
 			}
-
-			//var pc = disassembler.cpu.Pc - disassembler.mem.GameStartAddress;
-			//if (pc % 2 != 0)
-			//	pc--;
-
-			//var pos = pc / 2;
-			//lstbOpcodes.ClearSelected();
-			//lstbOpcodes.SetSelected(pos, true);
-
+			lstbOpcodes.ClearSelected();
+			
+			if(info.Opcode != null)
+			{
+				var index = lstbOpcodes.Items.IndexOf(info.Opcode);
+				lstbOpcodes.SetSelected(index, true);
+			}
 			pbGame.Refresh();
 		}
 
@@ -69,7 +67,7 @@ namespace WinFormsUI
 
 		private void btCycle_Click(object sender, EventArgs e)
 		{
-			disassembler.cpu.Cycle();
+			disassembler.Cycle();
 			UpdateDebugInfo();
 		}
 
@@ -80,7 +78,7 @@ namespace WinFormsUI
 			{
 				while (!requestedStop)
 				{
-					disassembler.cpu.Cycle();
+					disassembler.Cycle();
 					UpdateDebugInfo();
 					Application.DoEvents();
 					Thread.Sleep(1);
@@ -99,14 +97,15 @@ namespace WinFormsUI
 
 		private void pbGame_Paint(object sender, PaintEventArgs e)
 		{
-			var bound1 = disassembler.cpu.VideoPixels.GetUpperBound(0);
-			var bound2 = disassembler.cpu.VideoPixels.GetUpperBound(1);
+			var info = disassembler.Info;
+			var bound1 = info.VideoPixels.GetUpperBound(0)+1;
+			var bound2 = info.VideoPixels.GetUpperBound(1)+1;
 			for (int i = 0; i < bound1; i++)
 			{
 				for (int j = 0; j < bound2; j++)
 				{
 					Brush brush;
-					if (disassembler.cpu.VideoPixels[i, j])
+					if (info.VideoPixels[i, j])
 						brush = Brushes.Black;
 					else
 						brush = Brushes.White;

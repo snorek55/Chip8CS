@@ -11,7 +11,7 @@
 			return $"{base.ToString()} RET";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			cpu.Pc = cpu.Stack.Pop();
 		}

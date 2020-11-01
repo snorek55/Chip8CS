@@ -18,7 +18,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} SHR  V[{Vx.ToString(ByteFormat)}], V[{Vy.ToString(ByteFormat)}]";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			// Save LSB in VF
 			cpu.VRegisters[0xF] = Convert.ToByte(cpu.VRegisters[Vx] & 0x1);

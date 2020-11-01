@@ -18,7 +18,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} ADD V[{Vx.ToString(ByteFormat)}], V[{Vy.ToString(ByteFormat)}]";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			ushort sum = Convert.ToUInt16(cpu.VRegisters[Vx] + cpu.VRegisters[Vy]);
 			if (sum > 255)

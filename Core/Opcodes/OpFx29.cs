@@ -16,7 +16,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} LD F, V[{Vx.ToString(ByteFormat)}]";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			byte value = cpu.VRegisters[Vx];
 			byte offset = (byte)(Memory.LetterSize * value);

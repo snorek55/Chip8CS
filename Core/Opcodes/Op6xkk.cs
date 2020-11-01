@@ -18,7 +18,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} LD  V[{Vx.ToString(ByteFormat)}], {Value.ToString(ByteFormat)}";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			cpu.VRegisters[Vx] = Value;
 		}

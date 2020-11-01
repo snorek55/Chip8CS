@@ -16,7 +16,7 @@ namespace Core.Opcodes
 			return $"{base.ToString()} CALL {Address.ToString(WordFormat)}";
 		}
 
-		public override void Execute(Cpu cpu)
+		internal override void Execute(Cpu cpu)
 		{
 			cpu.Stack.Push(cpu.Pc);
 			cpu.Pc = Address;

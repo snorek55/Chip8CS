@@ -1,9 +1,11 @@
-﻿using System;
-using System.IO;
+﻿using Core.Opcodes;
+
+using System;
+using System.Collections.Generic;
 
 namespace Core
 {
-	public class Memory
+	internal class Memory
 	{
 		public static readonly byte[] Fontset =
 		{
@@ -33,32 +35,52 @@ namespace Core
 
 		private const ushort MaxBytes = 4096;
 
-		private byte[] bytes = new byte[MaxBytes];
 
-		public Memory()
+		public IList<BaseOp> GameOps { get; private set; } = new List<BaseOp>();
+
+
+		private byte[] bytes = new byte[MaxBytes];
+		private OpcodeDecoder decoder;
+
+		internal Memory(OpcodeDecoder decoder)
 		{
+			this.decoder = decoder;
 			Initialize();
 		}
 
-		public void Initialize()
+		internal void Initialize()
 		{
 			bytes = new byte[MaxBytes];
+			GameOps.Clear();
 
 			for (int i = 0; i < 80; ++i)
-				bytes[i + FonsetStartAddress] = Fontset[i];
+				bytes[FonsetStartAddress+ i] = Fontset[i];
 		}
 
-		public void LoadRom(string path)
+		public void LoadGame(byte[] gameBytes)
 		{
-			if (!File.Exists(path))
-				throw new InvalidOperationException("Path does not exist");
-
-			var gameBytes = File.ReadAllBytes(path);
-
-			for (int i = 0; i < gameBytes.Length; i++)
+			Initialize();
+			for (int i = 0; i < gameBytes.Length;)
 			{
-				bytes[GameStartAddress + i] = gameBytes[i];
+				var msb = gameBytes[i];
+				bytes[GameStartAddress + i] = msb;
+				i++;
+				var lsb = gameBytes[i];
+				bytes[GameStartAddress + i] = lsb;
+				i++;
+				var op = decoder.DecodeOp(msb, lsb);
+				GameOps.Add(op);
 			}
+		}
+
+		public BaseOp GetOpCode(ushort pc)
+		{
+			var rva = pc - GameStartAddress;
+			if (rva % 2 != 0)
+				rva--;
+
+			var opIndex = rva / 2;
+			return GameOps[opIndex];
 		}
 
 		public byte GetByte(ushort pos)
