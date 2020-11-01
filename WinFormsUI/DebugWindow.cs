@@ -24,6 +24,11 @@ namespace WinFormsUI
 		{
 			disassembler.LoadRom(Application.StartupPath + "PONG");
 			lstbOpcodes.DataSource = disassembler.Opcodes;
+			for (int i = 0; i < 16; i++)
+			{
+				lstbStack.Items.Add(i.ToString("X") + " - " + 0);
+				lstbVRegisters.Items.Add(i.ToString("X") + " - " + 0);
+			}
 			UpdateDebugInfo();
 		}
 
@@ -34,19 +39,17 @@ namespace WinFormsUI
 			lblOpcode.Text = info.Opcode?.ToString();
 			lblPc.Text = info.Pc.ToString("X3");
 
-			lstbStack.Items.Clear();
 			var i = 0;
 			foreach (var level in info.StackLevels)
 			{
-				lstbStack.Items.Add(i.ToString("X") + " - " + level.ToString("X"));
+				lstbStack.Items[i] = i.ToString("X") + " - " + level.ToString("X");
 				i++;
 			}
 
-			lstbVRegisters.Items.Clear();
 			i = 0;
 			foreach (var reg in info.VRegisters)
 			{
-				lstbVRegisters.Items.Add(i.ToString("X") + " - " + reg.ToString("X"));
+				lstbVRegisters.Items[i] = i.ToString("X") + " - " + reg.ToString("X");
 
 				i++;
 			}
@@ -106,9 +109,9 @@ namespace WinFormsUI
 				{
 					Brush brush;
 					if (info.VideoPixels[i, j])
-						brush = Brushes.Black;
-					else
 						brush = Brushes.White;
+					else
+						brush = Brushes.Black;
 
 					e.Graphics.FillRectangle(brush, i, j, 1, 1);
 				}
