@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Reflection.Emit;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Disassembler = Core.Disassembler;
@@ -14,10 +13,12 @@ namespace WinFormsUI
 		private Disassembler disassembler = new Disassembler();
 
 		private bool requestedStop;
+		private readonly SynchronizationContext synchronizationContext;
 
 		public DebugWindow()
 		{
 			InitializeComponent();
+			synchronizationContext = SynchronizationContext.Current;
 		}
 
 		private void Initialize()
@@ -35,9 +36,9 @@ namespace WinFormsUI
 		private void UpdateDebugInfo()
 		{
 			var info = disassembler.Info;
-			lblIndexRegister.Text = info.IndexRegister.ToString("X3");
+			lblIndexRegister.Text = info.IndexRegister.ToString("X");
 			lblOpcode.Text = info.Opcode?.ToString();
-			lblPc.Text = info.Pc.ToString("X3");
+			lblPc.Text = info.Pc.ToString("X");
 
 			var i = 0;
 			foreach (var level in info.StackLevels)
@@ -53,9 +54,10 @@ namespace WinFormsUI
 
 				i++;
 			}
+
 			lstbOpcodes.ClearSelected();
-			
-			if(info.Opcode != null)
+
+			if (info.Opcode != null)
 			{
 				var index = lstbOpcodes.Items.IndexOf(info.Opcode);
 				lstbOpcodes.SetSelected(index, true);
@@ -74,22 +76,20 @@ namespace WinFormsUI
 			UpdateDebugInfo();
 		}
 
-		private void btRun_Click(object sender, EventArgs e)
+		private async void btRun_Click(object sender, EventArgs e)
 		{
 			requestedStop = false;
-			try
+
+			await Task.Run(() => { Run(); });
+		}
+
+		private void Run()
+		{
+			while (!requestedStop)
 			{
-				while (!requestedStop)
-				{
-					disassembler.Cycle();
-					UpdateDebugInfo();
-					Application.DoEvents();
-					Thread.Sleep(1);
-				}
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine(ex.ToString());
+				disassembler.Cycle();
+
+				synchronizationContext.Send(new SendOrPostCallback(_ => { UpdateDebugInfo(); }), new object());
 			}
 		}
 
@@ -101,8 +101,8 @@ namespace WinFormsUI
 		private void pbGame_Paint(object sender, PaintEventArgs e)
 		{
 			var info = disassembler.Info;
-			var bound1 = info.VideoPixels.GetUpperBound(0)+1;
-			var bound2 = info.VideoPixels.GetUpperBound(1)+1;
+			var bound1 = info.VideoPixels.GetUpperBound(0) + 1;
+			var bound2 = info.VideoPixels.GetUpperBound(1) + 1;
 			for (int i = 0; i < bound1; i++)
 			{
 				for (int j = 0; j < bound2; j++)

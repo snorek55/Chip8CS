@@ -35,9 +35,7 @@ namespace Core
 
 		private const ushort MaxBytes = 4096;
 
-
 		public IList<BaseOp> GameOps { get; private set; } = new List<BaseOp>();
-
 
 		private byte[] bytes = new byte[MaxBytes];
 		private OpcodeDecoder decoder;
@@ -54,7 +52,7 @@ namespace Core
 			GameOps.Clear();
 
 			for (int i = 0; i < 80; ++i)
-				bytes[FonsetStartAddress+ i] = Fontset[i];
+				bytes[FonsetStartAddress + i] = Fontset[i];
 		}
 
 		public void LoadGame(byte[] gameBytes)
@@ -63,12 +61,14 @@ namespace Core
 			for (int i = 0; i < gameBytes.Length;)
 			{
 				var msb = gameBytes[i];
+				var pos = GameStartAddress + i;
 				bytes[GameStartAddress + i] = msb;
 				i++;
 				var lsb = gameBytes[i];
 				bytes[GameStartAddress + i] = lsb;
 				i++;
 				var op = decoder.DecodeOp(msb, lsb);
+				op.Pos = pos;
 				GameOps.Add(op);
 			}
 		}
