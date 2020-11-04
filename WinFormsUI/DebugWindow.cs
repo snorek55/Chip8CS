@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
@@ -79,8 +80,8 @@ namespace WinFormsUI
 		private async void btRun_Click(object sender, EventArgs e)
 		{
 			requestedStop = false;
-
 			await Task.Run(() => { Run(); });
+
 		}
 
 		private void Run()
@@ -89,7 +90,8 @@ namespace WinFormsUI
 			{
 				disassembler.Cycle();
 
-				synchronizationContext.Send(new SendOrPostCallback(_ => { UpdateDebugInfo(); }), new object());
+				synchronizationContext.Send(new SendOrPostCallback(_ => { UpdateDebugInfo(); }),
+				new object());
 			}
 		}
 
@@ -121,6 +123,88 @@ namespace WinFormsUI
 		private void DebugWindow_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			requestedStop = true;
+		}
+
+		private void DebugWindow_KeyUp(object sender, KeyEventArgs e)
+		{
+			var key = e.KeyCode;
+			int num = ParseKeyNum(key);
+			if (num < 0)
+				return;
+
+			disassembler.OnKeyChanged(num, false);
+		}
+
+		private void DebugWindow_KeyDown(object sender, KeyEventArgs e)
+		{
+			var key = e.KeyCode;
+			int num = ParseKeyNum(key);
+			if (num < 0)
+				return;
+
+			disassembler.OnKeyChanged(num, true);
+		}
+
+		private int ParseKeyNum(Keys key)
+		{
+			switch (key)
+			{
+				case Keys.D1:
+					return 0;
+
+				case Keys.D2:
+					return 1;
+
+				case Keys.D3:
+					return 2;
+
+				case Keys.D4:
+					return 3;
+
+				case Keys.Q:
+					return 4;
+
+				case Keys.W:
+					return 5;
+
+				case Keys.E:
+					return 6;
+
+				case Keys.R:
+					return 7;
+
+				case Keys.A:
+					return 8;
+
+				case Keys.S:
+					return 9;
+
+				case Keys.D:
+					return 10;
+
+				case Keys.F:
+					return 11;
+
+				case Keys.Z:
+					return 12;
+
+				case Keys.X:
+					return 13;
+
+				case Keys.C:
+					return 14;
+
+				case Keys.V:
+					return 15;
+
+				default:
+					return -1;
+			}
+		}
+
+		private void DebugWindow_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			Debug.Write("hey");
 		}
 	}
 }

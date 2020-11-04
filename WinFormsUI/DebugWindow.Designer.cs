@@ -49,6 +49,7 @@
 			// 
 			// lstbOpcodes
 			// 
+			this.lstbOpcodes.Enabled = false;
 			this.lstbOpcodes.FormattingEnabled = true;
 			this.lstbOpcodes.ItemHeight = 15;
 			this.lstbOpcodes.Location = new System.Drawing.Point(12, 12);
@@ -94,6 +95,7 @@
 			// 
 			// lstbVRegisters
 			// 
+			this.lstbVRegisters.Enabled = false;
 			this.lstbVRegisters.FormattingEnabled = true;
 			this.lstbVRegisters.ItemHeight = 15;
 			this.lstbVRegisters.Location = new System.Drawing.Point(265, 129);
@@ -112,6 +114,7 @@
 			// 
 			// lstbStack
 			// 
+			this.lstbStack.Enabled = false;
 			this.lstbStack.FormattingEnabled = true;
 			this.lstbStack.ItemHeight = 15;
 			this.lstbStack.Location = new System.Drawing.Point(435, 129);
@@ -218,10 +221,14 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.lstbOpcodes);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.KeyPreview = true;
 			this.Name = "DebugWindow";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Debug";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugWindow_FormClosing);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DebugWindow_KeyDown);
+			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DebugWindow_KeyPress);
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.DebugWindow_KeyUp);
 			((System.ComponentModel.ISupportInitialize)(this.pbGame)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

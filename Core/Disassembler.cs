@@ -14,6 +14,7 @@ namespace Core
 		internal readonly Cpu cpu;
 		internal readonly Memory mem;
 		internal readonly Stack16Levels stack;
+
 		public Disassembler()
 		{
 			mem = new Memory(new OpcodeDecoder());
@@ -29,10 +30,16 @@ namespace Core
 			var gameBytes = File.ReadAllBytes(path);
 			mem.LoadGame(gameBytes);
 		}
+
 		public void Cycle()
 		{
 			cpu.Cycle();
 			UpdateInfo();
+		}
+
+		public void OnKeyChanged(int keyNum, bool isDown)
+		{
+			cpu.KeyState[keyNum] = isDown;
 		}
 
 		private void UpdateInfo()
