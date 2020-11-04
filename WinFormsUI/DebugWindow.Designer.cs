@@ -191,9 +191,9 @@
 			// 
 			// pbGame
 			// 
-			this.pbGame.Location = new System.Drawing.Point(642, 189);
+			this.pbGame.Location = new System.Drawing.Point(624, 188);
 			this.pbGame.Name = "pbGame";
-			this.pbGame.Size = new System.Drawing.Size(128, 64);
+			this.pbGame.Size = new System.Drawing.Size(256, 128);
 			this.pbGame.TabIndex = 7;
 			this.pbGame.TabStop = false;
 			this.pbGame.Paint += new System.Windows.Forms.PaintEventHandler(this.pbGame_Paint);
@@ -203,7 +203,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
-			this.ClientSize = new System.Drawing.Size(784, 561);
+			this.ClientSize = new System.Drawing.Size(957, 561);
 			this.Controls.Add(this.pbGame);
 			this.Controls.Add(this.btStop);
 			this.Controls.Add(this.btRun);
@@ -227,7 +227,6 @@
 			this.Text = "Debug";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugWindow_FormClosing);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DebugWindow_KeyDown);
-			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DebugWindow_KeyPress);
 			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.DebugWindow_KeyUp);
 			((System.ComponentModel.ISupportInitialize)(this.pbGame)).EndInit();
 			this.ResumeLayout(false);

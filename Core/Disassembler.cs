@@ -11,6 +11,8 @@ namespace Core
 		public IList<BaseOp> Opcodes { get => mem.GameOps; }
 		public DissasemblerInfo Info { get; internal set; } = new DissasemblerInfo();
 
+		public int ScaleFactor { get; set; } = 1;
+
 		internal readonly Cpu cpu;
 		internal readonly Memory mem;
 		internal readonly Stack16Levels stack;
@@ -42,14 +44,39 @@ namespace Core
 			cpu.KeyState[keyNum] = isDown;
 		}
 
-		private void UpdateInfo()
+		internal void UpdateInfo()
 		{
 			Info.IndexRegister = cpu.IndexRegister;
 			Info.Opcode = cpu.Opcode;
 			Info.Pc = cpu.Pc;
 			Info.StackLevels = cpu.Stack.Levels;
 			Info.VRegisters = cpu.VRegisters;
-			Info.VideoPixels = cpu.VideoPixels;
+			Info.VideoPixels = MultiplyVideoPixels(cpu.VideoPixels);
+		}
+
+		/// <summary>
+		/// Grows an image using replication method.
+		/// </summary>
+		/// <param name="originalPixels"></param>
+		/// <returns></returns>
+		private bool[,] MultiplyVideoPixels(bool[,] originalPixels)
+		{
+			//Based on: https://ideone.com/rTctxV
+			var newWidth = Cpu.VideoWidth * ScaleFactor;
+			var newHeight = Cpu.VideoHeight * ScaleFactor;
+
+			var amplifiedPixels = new bool[newWidth, newHeight];
+
+			for (int i = 0; i < newWidth; i++)
+			{
+				var iUnscaled = i / ScaleFactor;
+				for (int j = 0; j < newHeight; j++)
+				{
+					var jUnscaled = j / ScaleFactor;
+					amplifiedPixels[i, j] = originalPixels[iUnscaled, jUnscaled];
+				}
+			}
+			return amplifiedPixels;
 		}
 	}
 }

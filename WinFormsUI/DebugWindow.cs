@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +30,7 @@ namespace WinFormsUI
 				lstbStack.Items.Add(i.ToString("X") + " - " + 0);
 				lstbVRegisters.Items.Add(i.ToString("X") + " - " + 0);
 			}
+			disassembler.ScaleFactor = 4;
 			UpdateDebugInfo();
 		}
 
@@ -81,7 +81,6 @@ namespace WinFormsUI
 		{
 			requestedStop = false;
 			await Task.Run(() => { Run(); });
-
 		}
 
 		private void Run()
@@ -200,11 +199,6 @@ namespace WinFormsUI
 				default:
 					return -1;
 			}
-		}
-
-		private void DebugWindow_KeyPress(object sender, KeyPressEventArgs e)
-		{
-			Debug.Write("hey");
 		}
 	}
 }
