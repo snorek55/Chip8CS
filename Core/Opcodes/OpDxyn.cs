@@ -44,7 +44,7 @@ namespace Core.Opcodes
 							cpu.VRegisters[0xF] = 1;
 
 						//Switch pixel
-						cpu.VideoPixels[xPos + col, yPos + row] = !cpu.VideoPixels[xPos + col, yPos + row];
+						cpu.VideoPixels[screenXPos, screenYPos] = !cpu.VideoPixels[screenXPos, screenYPos];
 					}
 				}
 			}
