@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace WinFormsUI
 		public DebugWindow()
 		{
 			InitializeComponent();
+			disassembler.ScaleFactor = 4;
 			synchronizationContext = SynchronizationContext.Current;
 		}
 
@@ -30,7 +32,7 @@ namespace WinFormsUI
 				lstbStack.Items.Add(i.ToString("X") + " - " + 0);
 				lstbVRegisters.Items.Add(i.ToString("X") + " - " + 0);
 			}
-			disassembler.ScaleFactor = 4;
+
 			UpdateDebugInfo();
 		}
 
@@ -85,12 +87,18 @@ namespace WinFormsUI
 
 		private void Run()
 		{
+			Stopwatch stopwatch = new Stopwatch();
 			while (!requestedStop)
 			{
+				stopwatch.Reset();
+				stopwatch.Start();
 				disassembler.Cycle();
 
 				synchronizationContext.Send(new SendOrPostCallback(_ => { UpdateDebugInfo(); }),
 				new object());
+				stopwatch.Stop();
+				var measuredTime = stopwatch.ElapsedMilliseconds;
+				Debug.WriteLine($"It took {measuredTime}ms");
 			}
 		}
 

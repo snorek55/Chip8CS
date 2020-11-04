@@ -11,7 +11,8 @@ namespace Core
 		public IList<BaseOp> Opcodes { get => mem.GameOps; }
 		public DissasemblerInfo Info { get; internal set; } = new DissasemblerInfo();
 
-		public int ScaleFactor { get; set; } = 1;
+		private int scaleFactor = 1;
+		public int ScaleFactor { get => scaleFactor; set { scaleFactor = value; UpdateInfo(); } }
 
 		internal readonly Cpu cpu;
 		internal readonly Memory mem;
