@@ -1,9 +1,5 @@
 ﻿using Core.Opcodes;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Core
 {
 	public class DissasemblerInfo
@@ -15,7 +11,7 @@ namespace Core
 		public ushort[] StackLevels { get; internal set; } = new ushort[16];
 		public byte[] VRegisters { get; internal set; } = new byte[16];
 
-		public bool[,] VideoPixels { get; set; } = new bool[64, 32];
-
+		public bool DrawingRequired { get; set; }
+		public bool[,] VideoPixels { get; set; }
 	}
 }

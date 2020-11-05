@@ -12,7 +12,10 @@ namespace Core
 		public DissasemblerInfo Info { get; internal set; } = new DissasemblerInfo();
 
 		private int scaleFactor = 1;
-		public int ScaleFactor { get => scaleFactor; set { scaleFactor = value; UpdateInfo(); } }
+		public int ScaleFactor { get => scaleFactor; set { scaleFactor = value; UpdateInfo(true); } }
+
+		public int CurrentHeight { get => Cpu.VideoHeight * scaleFactor; }
+		public int CurrentWidth { get => Cpu.VideoWidth * scaleFactor; }
 
 		internal readonly Cpu cpu;
 		internal readonly Memory mem;
@@ -23,6 +26,7 @@ namespace Core
 			mem = new Memory(new OpcodeDecoder());
 			stack = new Stack16Levels();
 			cpu = new Cpu(mem, stack);
+			Info.VideoPixels = new bool[Cpu.VideoWidth * ScaleFactor, Cpu.VideoHeight * ScaleFactor];
 		}
 
 		public void LoadRom(string path)
@@ -37,7 +41,7 @@ namespace Core
 		public void Cycle()
 		{
 			cpu.Cycle();
-			UpdateInfo();
+			UpdateInfo(cpu.DrawingRequired);
 		}
 
 		public void OnKeyChanged(int keyNum, bool isDown)
@@ -45,14 +49,19 @@ namespace Core
 			cpu.KeyState[keyNum] = isDown;
 		}
 
-		internal void UpdateInfo()
+		internal void UpdateInfo(bool drawingRequired)
 		{
 			Info.IndexRegister = cpu.IndexRegister;
 			Info.Opcode = cpu.Opcode;
 			Info.Pc = cpu.Pc;
 			Info.StackLevels = cpu.Stack.Levels;
 			Info.VRegisters = cpu.VRegisters;
-			Info.VideoPixels = MultiplyVideoPixels(cpu.VideoPixels);
+			Info.DrawingRequired = cpu.DrawingRequired;
+
+			if (drawingRequired)
+			{
+				Info.VideoPixels = ReplicateVideoPixels(cpu.VideoPixels);
+			}
 		}
 
 		/// <summary>
@@ -60,7 +69,7 @@ namespace Core
 		/// </summary>
 		/// <param name="originalPixels"></param>
 		/// <returns></returns>
-		private bool[,] MultiplyVideoPixels(bool[,] originalPixels)
+		private bool[,] ReplicateVideoPixels(bool[,] originalPixels)
 		{
 			//Based on: https://ideone.com/rTctxV
 			var newWidth = Cpu.VideoWidth * ScaleFactor;

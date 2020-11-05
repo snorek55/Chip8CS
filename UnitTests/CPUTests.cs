@@ -25,6 +25,21 @@ namespace UnitTests
 		}
 
 		[TestMethod]
+		public void WhenDxynOpIsExecuted_CpuRequiresDrawing()
+		{
+			mem.GameOps.Add(new OpDxyn(0xD123));
+			mem.SetByte(0x200, 0XD1);
+			mem.SetByte(0x201, 0x23);
+			cpu.VRegisters[1] = 0x25;
+			cpu.VRegisters[2] = 0x30;
+			cpu.IndexRegister = 0x250;
+			cpu.DrawingRequired = false;
+			cpu.Cycle();
+
+			cpu.DrawingRequired.Should().BeTrue();
+		}
+
+		[TestMethod]
 		public void WhenReadingFirstOpcode_OpcodeIsOk()
 		{
 			mem.GameOps.Add(new Op1nnn(0x1000));
@@ -33,6 +48,8 @@ namespace UnitTests
 			cpu.Cycle();
 			cpu.Opcode.Op.Should().Be(0x1000);
 		}
+
+		#region OpcodesTests
 
 		[TestMethod]
 		public void Op_1nnn_Ok()
@@ -559,5 +576,7 @@ namespace UnitTests
 				cpu.VRegisters[i].Should().Be(0);
 			}
 		}
+
+		#endregion OpcodesTests
 	}
 }

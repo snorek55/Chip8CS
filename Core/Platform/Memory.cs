@@ -35,6 +35,7 @@ namespace Core
 
 		private const ushort MaxBytes = 4096;
 
+		//TODO: adding an opcode should add bytes to mem, given a mem pos
 		public IList<BaseOp> GameOps { get; private set; } = new List<BaseOp>();
 
 		private byte[] bytes = new byte[MaxBytes];

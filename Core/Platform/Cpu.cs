@@ -25,6 +25,7 @@ namespace Core
 		internal bool[] KeyState = new bool[16];
 		public byte DelayTimer { get; internal set; }
 		public byte SoundTimer { get; internal set; }
+		internal bool DrawingRequired { get; set; }
 
 		internal Cpu(Memory memory, Stack16Levels stack)
 		{
@@ -44,10 +45,13 @@ namespace Core
 			Opcode = null;
 			DelayTimer = 0;
 			SoundTimer = 0;
+			DrawingRequired = false;
 		}
 
 		public void Cycle()
 		{
+			DrawingRequired = false;
+
 			Fetch();
 			Execute();
 

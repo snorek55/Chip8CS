@@ -19,7 +19,9 @@ namespace WinFormsUI
 		public DebugWindow()
 		{
 			InitializeComponent();
-			disassembler.ScaleFactor = 4;
+			disassembler.ScaleFactor = 6;
+			pbGame.Width = disassembler.CurrentWidth + 40;//Must take into account the border
+			pbGame.Height = disassembler.CurrentHeight + 40;
 			synchronizationContext = SynchronizationContext.Current;
 		}
 
@@ -65,7 +67,9 @@ namespace WinFormsUI
 				var index = lstbOpcodes.Items.IndexOf(info.Opcode);
 				lstbOpcodes.SetSelected(index, true);
 			}
-			pbGame.Refresh();
+
+			if (info.DrawingRequired)
+				pbGame.Refresh();
 		}
 
 		private void btInitialize_Click(object sender, EventArgs e)
