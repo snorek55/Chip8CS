@@ -24,8 +24,8 @@ namespace Core.Opcodes
 		{
 			cpu.DrawingRequired = true;
 			// Wrap if going beyond screen boundaries
-			byte xPos = Convert.ToByte(cpu.VRegisters[Vx] % Cpu.VideoWidth);
-			byte yPos = Convert.ToByte(cpu.VRegisters[Vy] % Cpu.VideoHeight);
+			byte xPos = cpu.VRegisters[Vx];
+			byte yPos = cpu.VRegisters[Vy];
 
 			cpu.VRegisters[0xF] = 0;
 

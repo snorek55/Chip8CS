@@ -114,14 +114,14 @@ namespace WinFormsUI
 		private void pbGame_Paint(object sender, PaintEventArgs e)
 		{
 			var info = disassembler.Info;
-			var bound1 = info.VideoPixels.GetUpperBound(0) + 1;
-			var bound2 = info.VideoPixels.GetUpperBound(1) + 1;
+			var bound1 = disassembler.CurrentWidth;
+			var bound2 = disassembler.CurrentHeight;
 			for (int i = 0; i < bound1; i++)
 			{
 				for (int j = 0; j < bound2; j++)
 				{
 					Brush brush;
-					if (info.VideoPixels[i, j])
+					if (info.VideoPixels[i][j])
 						brush = Brushes.White;
 					else
 						brush = Brushes.Black;

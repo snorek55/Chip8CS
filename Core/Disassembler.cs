@@ -26,7 +26,7 @@ namespace Core
 			mem = new Memory(new OpcodeDecoder());
 			stack = new Stack16Levels();
 			cpu = new Cpu(mem, stack);
-			Info.VideoPixels = new bool[Cpu.VideoWidth * ScaleFactor, Cpu.VideoHeight * ScaleFactor];
+			Info.InitializeVideoPixels(Cpu.VideoWidth * ScaleFactor, Cpu.VideoHeight * ScaleFactor);
 		}
 
 		public void LoadRom(string path)
@@ -69,13 +69,17 @@ namespace Core
 		/// </summary>
 		/// <param name="originalPixels"></param>
 		/// <returns></returns>
-		private bool[,] ReplicateVideoPixels(bool[,] originalPixels)
+		private bool[][] ReplicateVideoPixels(bool[,] originalPixels)
 		{
 			//Based on: https://ideone.com/rTctxV
 			var newWidth = Cpu.VideoWidth * ScaleFactor;
 			var newHeight = Cpu.VideoHeight * ScaleFactor;
 
-			var amplifiedPixels = new bool[newWidth, newHeight];
+			var amplifiedPixels = new bool[newWidth][];
+			for (int i = 0; i < newWidth; i++)
+			{
+				amplifiedPixels[i] = new bool[newHeight];
+			}
 
 			for (int i = 0; i < newWidth; i++)
 			{
@@ -83,7 +87,7 @@ namespace Core
 				for (int j = 0; j < newHeight; j++)
 				{
 					var jUnscaled = j / ScaleFactor;
-					amplifiedPixels[i, j] = originalPixels[iUnscaled, jUnscaled];
+					amplifiedPixels[i][j] = originalPixels[iUnscaled, jUnscaled];
 				}
 			}
 			return amplifiedPixels;
