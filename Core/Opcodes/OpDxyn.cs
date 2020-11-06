@@ -23,10 +23,9 @@ namespace Core.Opcodes
 		internal override void Execute(Cpu cpu)
 		{
 			cpu.DrawingRequired = true;
-			// Wrap if going beyond screen boundaries
+
 			byte xPos = cpu.VRegisters[Vx];
 			byte yPos = cpu.VRegisters[Vy];
-
 			cpu.VRegisters[0xF] = 0;
 
 			for (byte row = 0; row < Height; row++)

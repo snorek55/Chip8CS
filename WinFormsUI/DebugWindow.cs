@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,9 +18,7 @@ namespace WinFormsUI
 		public DebugWindow()
 		{
 			InitializeComponent();
-			disassembler.ScaleFactor = 6;
-			pbGame.Width = disassembler.CurrentWidth + 40;//Must take into account the border
-			pbGame.Height = disassembler.CurrentHeight + 40;
+			pbGame.Image = disassembler.Info.VideoBitmap;
 			synchronizationContext = SynchronizationContext.Current;
 		}
 
@@ -69,7 +66,10 @@ namespace WinFormsUI
 			}
 
 			if (info.DrawingRequired)
-				pbGame.Refresh();
+			{
+				pbGame.Image = info.VideoBitmap;
+				pbGame.Size = info.VideoBitmap.Size;
+			}
 		}
 
 		private void btInitialize_Click(object sender, EventArgs e)
@@ -102,33 +102,13 @@ namespace WinFormsUI
 				new object());
 				stopwatch.Stop();
 				var measuredTime = stopwatch.ElapsedMilliseconds;
-				Debug.WriteLine($"It took {measuredTime}ms");
+				Debug.WriteLine($"Cpu+GUI took {measuredTime}ms");
 			}
 		}
 
 		private void btStop_Click(object sender, EventArgs e)
 		{
 			requestedStop = true;
-		}
-
-		private void pbGame_Paint(object sender, PaintEventArgs e)
-		{
-			var info = disassembler.Info;
-			var bound1 = disassembler.CurrentWidth;
-			var bound2 = disassembler.CurrentHeight;
-			for (int i = 0; i < bound1; i++)
-			{
-				for (int j = 0; j < bound2; j++)
-				{
-					Brush brush;
-					if (info.VideoPixels[i][j])
-						brush = Brushes.White;
-					else
-						brush = Brushes.Black;
-
-					e.Graphics.FillRectangle(brush, i, j, 1, 1);
-				}
-			}
 		}
 
 		private void DebugWindow_FormClosing(object sender, FormClosingEventArgs e)

@@ -1,5 +1,7 @@
 ﻿using Core.Opcodes;
 
+using System.Drawing;
+
 namespace Core
 {
 	public class DissasemblerInfo
@@ -12,15 +14,12 @@ namespace Core
 		public byte[] VRegisters { get; internal set; } = new byte[16];
 
 		public bool DrawingRequired { get; set; }
-		public bool[][] VideoPixels { get; internal set; }
 
-		public void InitializeVideoPixels(int width, int height)
+		public Bitmap VideoBitmap { get; internal set; }
+
+		public DissasemblerInfo(int width, int height)
 		{
-			VideoPixels = new bool[width][];
-			for (int i = 0; i < width; i++)
-			{
-				VideoPixels[i] = new bool[height];
-			}
+			VideoBitmap = new Bitmap(width, height);
 		}
 	}
 }

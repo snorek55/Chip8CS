@@ -2,6 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 
 namespace Core
@@ -9,14 +11,11 @@ namespace Core
 	public class Disassembler
 	{
 		public IList<BaseOp> Opcodes { get => mem.GameOps; }
-		public DissasemblerInfo Info { get; internal set; } = new DissasemblerInfo();
+		public DissasemblerInfo Info { get; internal set; }
+		public int Height { get => Cpu.VideoHeight; }
+		public int Width { get => Cpu.VideoWidth; }
 
-		private int scaleFactor = 1;
-		public int ScaleFactor { get => scaleFactor; set { scaleFactor = value; UpdateInfo(true); } }
-
-		public int CurrentHeight { get => Cpu.VideoHeight * scaleFactor; }
-		public int CurrentWidth { get => Cpu.VideoWidth * scaleFactor; }
-
+		private Bitmap OriginalBitmap;
 		internal readonly Cpu cpu;
 		internal readonly Memory mem;
 		internal readonly Stack16Levels stack;
@@ -26,7 +25,8 @@ namespace Core
 			mem = new Memory(new OpcodeDecoder());
 			stack = new Stack16Levels();
 			cpu = new Cpu(mem, stack);
-			Info.InitializeVideoPixels(Cpu.VideoWidth * ScaleFactor, Cpu.VideoHeight * ScaleFactor);
+			Info = new DissasemblerInfo(Width, Height);
+			OriginalBitmap = new Bitmap(Width, Height);
 		}
 
 		public void LoadRom(string path)
@@ -41,7 +41,7 @@ namespace Core
 		public void Cycle()
 		{
 			cpu.Cycle();
-			UpdateInfo(cpu.DrawingRequired);
+			UpdateInfo();
 		}
 
 		public void OnKeyChanged(int keyNum, bool isDown)
@@ -49,7 +49,7 @@ namespace Core
 			cpu.KeyState[keyNum] = isDown;
 		}
 
-		internal void UpdateInfo(bool drawingRequired)
+		internal void UpdateInfo()
 		{
 			Info.IndexRegister = cpu.IndexRegister;
 			Info.Opcode = cpu.Opcode;
@@ -58,39 +58,30 @@ namespace Core
 			Info.VRegisters = cpu.VRegisters;
 			Info.DrawingRequired = cpu.DrawingRequired;
 
-			if (drawingRequired)
-			{
-				Info.VideoPixels = ReplicateVideoPixels(cpu.VideoPixels);
-			}
+			if (cpu.DrawingRequired)
+				UpdateVideoBitmap(cpu.VideoPixels);
 		}
 
-		/// <summary>
-		/// Grows an image using replication method.
-		/// </summary>
-		/// <param name="originalPixels"></param>
-		/// <returns></returns>
-		private bool[][] ReplicateVideoPixels(bool[,] originalPixels)
+		private void UpdateVideoBitmap(bool[,] originalPixels)
 		{
+			OriginalBitmap = new Bitmap(Width, Height);
 			//Based on: https://ideone.com/rTctxV
-			var newWidth = Cpu.VideoWidth * ScaleFactor;
-			var newHeight = Cpu.VideoHeight * ScaleFactor;
-
-			var amplifiedPixels = new bool[newWidth][];
-			for (int i = 0; i < newWidth; i++)
+			for (int i = 0; i < OriginalBitmap.Width; i++)
 			{
-				amplifiedPixels[i] = new bool[newHeight];
-			}
-
-			for (int i = 0; i < newWidth; i++)
-			{
-				var iUnscaled = i / ScaleFactor;
-				for (int j = 0; j < newHeight; j++)
+				for (int j = 0; j < OriginalBitmap.Height; j++)
 				{
-					var jUnscaled = j / ScaleFactor;
-					amplifiedPixels[i][j] = originalPixels[iUnscaled, jUnscaled];
+					if (originalPixels[i, j])
+						OriginalBitmap.SetPixel(i, j, Color.White);
+					else
+						OriginalBitmap.SetPixel(i, j, Color.Black);
 				}
 			}
-			return amplifiedPixels;
+
+			var resized = new Bitmap(OriginalBitmap.Width * 6, OriginalBitmap.Height * 6);
+			using var g = Graphics.FromImage(resized);
+			g.InterpolationMode = InterpolationMode.NearestNeighbor;
+			g.DrawImage(OriginalBitmap, 0, 0, resized.Width, resized.Height);
+			Info.VideoBitmap = resized;
 		}
 	}
 }
