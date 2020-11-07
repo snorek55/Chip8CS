@@ -10,8 +10,8 @@ namespace Core
 	internal class Cpu
 	{
 		private const ushort StartAddress = 0x200;
-		internal const int VideoWidth = 64;
-		internal const int VideoHeight = 32;
+		internal const int VideoWidth = 65;
+		internal const int VideoHeight = 33;
 		internal const byte SpriteColumns = 8;
 		internal Memory Memory { get; private set; }
 
@@ -27,7 +27,7 @@ namespace Core
 		public byte SoundTimer { get; internal set; }
 		internal bool DrawingRequired { get; set; }
 
-		private OpcodeDecoder decoder = new OpcodeDecoder();
+		private readonly OpcodeDecoder decoder = new OpcodeDecoder();
 
 		internal Cpu(Memory memory, Stack16Levels stack)
 		{
