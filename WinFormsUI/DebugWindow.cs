@@ -99,17 +99,19 @@ namespace WinFormsUI
 		private void Run()
 		{
 			Stopwatch stopwatch = new Stopwatch();
+			var clockTickMs = 10;
 			while (!requestedStop)
 			{
 				stopwatch.Reset();
 				stopwatch.Start();
 				disassembler.Cycle();
-
 				synchronizationContext.Send(new SendOrPostCallback(_ => { UpdateGuiInfo(); }),
 				new object());
-				stopwatch.Stop();
-				var measuredTime = stopwatch.ElapsedMilliseconds;
-				Debug.WriteLine($"Cpu+GUI took {measuredTime}ms");
+				var difTime = clockTickMs - (int)stopwatch.ElapsedMilliseconds;
+				if (difTime > 0)
+					Thread.Sleep(difTime);
+
+				Debug.WriteLine($"Cpu+GUI took {stopwatch.ElapsedMilliseconds}ms");
 			}
 		}
 
