@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Core.Games;
+
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,7 +14,7 @@ namespace WinFormsUI
 	public partial class DebugWindow : Form
 	{
 		private Disassembler disassembler = new Disassembler();
-
+		private GameLoader loader = new GameLoader();
 		private bool requestedStop;
 		private readonly SynchronizationContext synchronizationContext;
 
@@ -20,11 +23,16 @@ namespace WinFormsUI
 			InitializeComponent();
 			pbGame.Image = disassembler.Info.VideoBitmap;
 			synchronizationContext = SynchronizationContext.Current;
+			lstbGames.DataSource = loader.GamesFullPaths;
+			lstbGames.DisplayMember = nameof(FileInfo.Name);
 		}
 
 		private void Initialize()
 		{
-			disassembler.LoadRom(Application.StartupPath + "PONG");
+			lstbOpcodes.DataSource = null;
+			lstbStack.Items.Clear();
+			lstbVRegisters.Items.Clear();
+
 			lstbOpcodes.DataSource = disassembler.Opcodes;
 			for (int i = 0; i < 16; i++)
 			{
@@ -32,10 +40,10 @@ namespace WinFormsUI
 				lstbVRegisters.Items.Add(i.ToString("X") + " - " + 0);
 			}
 
-			UpdateDebugInfo();
+			UpdateGuiInfo();
 		}
 
-		private void UpdateDebugInfo()
+		private void UpdateGuiInfo()
 		{
 			var info = disassembler.Info;
 			lblIndexRegister.Text = info.IndexRegister.ToString("X");
@@ -80,7 +88,7 @@ namespace WinFormsUI
 		private void btCycle_Click(object sender, EventArgs e)
 		{
 			disassembler.Cycle();
-			UpdateDebugInfo();
+			UpdateGuiInfo();
 		}
 
 		private async void btRun_Click(object sender, EventArgs e)
@@ -98,7 +106,7 @@ namespace WinFormsUI
 				stopwatch.Start();
 				disassembler.Cycle();
 
-				synchronizationContext.Send(new SendOrPostCallback(_ => { UpdateDebugInfo(); }),
+				synchronizationContext.Send(new SendOrPostCallback(_ => { UpdateGuiInfo(); }),
 				new object());
 				stopwatch.Stop();
 				var measuredTime = stopwatch.ElapsedMilliseconds;
@@ -191,6 +199,16 @@ namespace WinFormsUI
 				default:
 					return -1;
 			}
+		}
+
+		private void lstbGames_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (lstbGames.SelectedIndex == -1)
+				return;
+
+			var gameInfo = (FileInfo)lstbGames.Items[lstbGames.SelectedIndex];
+			disassembler.LoadRom(gameInfo.FullName);
+			Initialize();
 		}
 	}
 }

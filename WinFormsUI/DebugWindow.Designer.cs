@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugWindow));
 			this.lstbOpcodes = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -45,107 +44,178 @@
 			this.btRun = new System.Windows.Forms.Button();
 			this.btStop = new System.Windows.Forms.Button();
 			this.pbGame = new System.Windows.Forms.PictureBox();
+			this.lstbGames = new System.Windows.Forms.ListBox();
 			((System.ComponentModel.ISupportInitialize)(this.pbGame)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// lstbOpcodes
 			// 
-			resources.ApplyResources(this.lstbOpcodes, "lstbOpcodes");
 			this.lstbOpcodes.FormattingEnabled = true;
+			this.lstbOpcodes.ItemHeight = 15;
+			this.lstbOpcodes.Location = new System.Drawing.Point(222, 13);
 			this.lstbOpcodes.Name = "lstbOpcodes";
+			this.lstbOpcodes.Size = new System.Drawing.Size(247, 529);
+			this.lstbOpcodes.TabIndex = 0;
 			// 
 			// label1
 			// 
-			resources.ApplyResources(this.label1, "label1");
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(475, 11);
 			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(78, 15);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "IndexRegister";
 			// 
 			// label2
 			// 
-			resources.ApplyResources(this.label2, "label2");
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(475, 26);
 			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(96, 15);
+			this.label2.TabIndex = 2;
+			this.label2.Text = "ProgramCounter";
 			// 
 			// lblIndexRegister
 			// 
-			resources.ApplyResources(this.lblIndexRegister, "lblIndexRegister");
+			this.lblIndexRegister.AutoSize = true;
+			this.lblIndexRegister.Location = new System.Drawing.Point(577, 11);
 			this.lblIndexRegister.Name = "lblIndexRegister";
+			this.lblIndexRegister.Size = new System.Drawing.Size(69, 15);
+			this.lblIndexRegister.TabIndex = 3;
+			this.lblIndexRegister.Text = "Unintialized";
 			// 
 			// lblPc
 			// 
-			resources.ApplyResources(this.lblPc, "lblPc");
+			this.lblPc.AutoSize = true;
+			this.lblPc.Location = new System.Drawing.Point(577, 26);
 			this.lblPc.Name = "lblPc";
+			this.lblPc.Size = new System.Drawing.Size(69, 15);
+			this.lblPc.TabIndex = 3;
+			this.lblPc.Text = "Unintialized";
 			// 
 			// lstbVRegisters
 			// 
-			resources.ApplyResources(this.lstbVRegisters, "lstbVRegisters");
+			this.lstbVRegisters.Enabled = false;
 			this.lstbVRegisters.FormattingEnabled = true;
+			this.lstbVRegisters.ItemHeight = 15;
+			this.lstbVRegisters.Location = new System.Drawing.Point(475, 130);
 			this.lstbVRegisters.Name = "lstbVRegisters";
+			this.lstbVRegisters.Size = new System.Drawing.Size(164, 409);
+			this.lstbVRegisters.TabIndex = 4;
 			// 
 			// label3
 			// 
-			resources.ApplyResources(this.label3, "label3");
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(475, 112);
 			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(61, 15);
+			this.label3.TabIndex = 2;
+			this.label3.Text = "V registers";
 			// 
 			// lstbStack
 			// 
-			resources.ApplyResources(this.lstbStack, "lstbStack");
+			this.lstbStack.Enabled = false;
 			this.lstbStack.FormattingEnabled = true;
+			this.lstbStack.ItemHeight = 15;
+			this.lstbStack.Location = new System.Drawing.Point(645, 130);
 			this.lstbStack.Name = "lstbStack";
+			this.lstbStack.Size = new System.Drawing.Size(164, 409);
+			this.lstbStack.TabIndex = 4;
 			// 
 			// label4
 			// 
-			resources.ApplyResources(this.label4, "label4");
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(653, 112);
 			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(35, 15);
+			this.label4.TabIndex = 2;
+			this.label4.Text = "Stack";
 			// 
 			// label5
 			// 
-			resources.ApplyResources(this.label5, "label5");
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(475, 41);
 			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(49, 15);
+			this.label5.TabIndex = 2;
+			this.label5.Text = "Opcode";
 			// 
 			// lblOpcode
 			// 
-			resources.ApplyResources(this.lblOpcode, "lblOpcode");
+			this.lblOpcode.AutoSize = true;
+			this.lblOpcode.Location = new System.Drawing.Point(577, 41);
 			this.lblOpcode.Name = "lblOpcode";
+			this.lblOpcode.Size = new System.Drawing.Size(69, 15);
+			this.lblOpcode.TabIndex = 3;
+			this.lblOpcode.Text = "Unintialized";
 			// 
 			// btInitialize
 			// 
-			resources.ApplyResources(this.btInitialize, "btInitialize");
+			this.btInitialize.Location = new System.Drawing.Point(652, 13);
 			this.btInitialize.Name = "btInitialize";
+			this.btInitialize.Size = new System.Drawing.Size(75, 23);
+			this.btInitialize.TabIndex = 5;
+			this.btInitialize.Text = "Initialize";
 			this.btInitialize.UseVisualStyleBackColor = true;
 			this.btInitialize.Click += new System.EventHandler(this.btInitialize_Click);
 			// 
 			// btCycle
 			// 
-			resources.ApplyResources(this.btCycle, "btCycle");
+			this.btCycle.Location = new System.Drawing.Point(653, 41);
 			this.btCycle.Name = "btCycle";
+			this.btCycle.Size = new System.Drawing.Size(75, 23);
+			this.btCycle.TabIndex = 5;
+			this.btCycle.Text = "Cycle";
 			this.btCycle.UseVisualStyleBackColor = true;
 			this.btCycle.Click += new System.EventHandler(this.btCycle_Click);
 			// 
 			// btRun
 			// 
-			resources.ApplyResources(this.btRun, "btRun");
+			this.btRun.Location = new System.Drawing.Point(653, 70);
 			this.btRun.Name = "btRun";
+			this.btRun.Size = new System.Drawing.Size(75, 23);
+			this.btRun.TabIndex = 5;
+			this.btRun.Text = "Run";
 			this.btRun.UseVisualStyleBackColor = true;
 			this.btRun.Click += new System.EventHandler(this.btRun_Click);
 			// 
 			// btStop
 			// 
-			resources.ApplyResources(this.btStop, "btStop");
+			this.btStop.Location = new System.Drawing.Point(734, 70);
 			this.btStop.Name = "btStop";
+			this.btStop.Size = new System.Drawing.Size(75, 23);
+			this.btStop.TabIndex = 6;
+			this.btStop.Text = "Stop";
 			this.btStop.UseVisualStyleBackColor = true;
 			this.btStop.Click += new System.EventHandler(this.btStop_Click);
 			// 
 			// pbGame
 			// 
-			resources.ApplyResources(this.pbGame, "pbGame");
 			this.pbGame.BackColor = System.Drawing.Color.Black;
+			this.pbGame.Location = new System.Drawing.Point(900, 220);
 			this.pbGame.Name = "pbGame";
+			this.pbGame.Size = new System.Drawing.Size(256, 128);
+			this.pbGame.TabIndex = 7;
 			this.pbGame.TabStop = false;
+			// 
+			// lstbGames
+			// 
+			this.lstbGames.FormattingEnabled = true;
+			this.lstbGames.ItemHeight = 15;
+			this.lstbGames.Location = new System.Drawing.Point(12, 12);
+			this.lstbGames.Name = "lstbGames";
+			this.lstbGames.Size = new System.Drawing.Size(165, 529);
+			this.lstbGames.TabIndex = 8;
+			this.lstbGames.SelectedIndexChanged += new System.EventHandler(this.lstbGames_SelectedIndexChanged);
 			// 
 			// DebugWindow
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSize = true;
 			this.BackColor = System.Drawing.Color.White;
+			this.ClientSize = new System.Drawing.Size(1228, 564);
+			this.Controls.Add(this.lstbGames);
 			this.Controls.Add(this.pbGame);
 			this.Controls.Add(this.btStop);
 			this.Controls.Add(this.btRun);
@@ -165,6 +235,8 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.KeyPreview = true;
 			this.Name = "DebugWindow";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Text = "Debug";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugWindow_FormClosing);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DebugWindow_KeyDown);
 			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.DebugWindow_KeyUp);
@@ -192,6 +264,7 @@
 		private System.Windows.Forms.Button btRun;
 		private System.Windows.Forms.Button btStop;
 		private System.Windows.Forms.PictureBox pbGame;
+		private System.Windows.Forms.ListBox lstbGames;
 	}
 }
 

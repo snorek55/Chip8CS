@@ -4,6 +4,7 @@ namespace Core.Opcodes
 {
 	public class Op5xy0 : BaseOp
 	{
+		public bool IsValid { get; private set; } = true;
 		public byte Vx { get; set; }
 		public byte Vy { get; set; }
 
@@ -11,7 +12,7 @@ namespace Core.Opcodes
 		{
 			byte firstByte = Convert.ToByte(op & 0x000Fu);
 			if (firstByte != 0)
-				throw new ArgumentException($"Such function not found: {op}");
+				IsValid = false;
 
 			Vx = Convert.ToByte((op & 0x0F00u) >> 8);
 			Vy = Convert.ToByte((op & 0x00F0u) >> 4);
@@ -24,6 +25,9 @@ namespace Core.Opcodes
 
 		internal override void Execute(Cpu cpu)
 		{
+			if (!IsValid)
+				throw new InvalidOperationException("Opcode does not exist");
+
 			if (cpu.VRegisters[Vx] == cpu.VRegisters[Vy])
 				cpu.Pc += 2;
 		}

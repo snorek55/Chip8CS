@@ -18,7 +18,7 @@ namespace Core
 		internal Stack16Levels Stack { get; private set; }
 		public ushort IndexRegister { get; internal set; }
 
-		public byte[] VRegisters { get; private set; } = new byte[16];
+		public byte[] VRegisters { get; private set; }
 		public ushort Pc { get; internal set; }
 		public BaseOp Opcode { get; private set; }
 		public bool[,] VideoPixels { get; internal set; } = new bool[VideoWidth, VideoHeight];

@@ -58,7 +58,68 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing.Primitives" name="System.Drawing.Primitives, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lstbOpcodes.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>222, 13</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>475, 11</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>475, 26</value>
+  </data>
+  <data name="lblIndexRegister.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>577, 11</value>
+  </data>
+  <data name="lblPc.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>577, 26</value>
+  </data>
+  <data name="lstbVRegisters.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>475, 130</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>475, 112</value>
+  </data>
+  <data name="lstbStack.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>645, 130</value>
+  </data>
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>653, 112</value>
+  </data>
+  <data name="label5.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>475, 41</value>
+  </data>
+  <data name="lblOpcode.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>577, 41</value>
+  </data>
+  <data name="btInitialize.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>652, 13</value>
+  </data>
+  <data name="btCycle.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>653, 41</value>
+  </data>
+  <data name="btRun.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>653, 70</value>
+  </data>
+  <data name="btStop.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>734, 70</value>
+  </data>
+  <data name="pbGame.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>900, 220</value>
+  </data>
+  <assembly alias="System.Private.CoreLib" name="System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" />
+  <data name="lstbGames.ItemHeight" type="System.Int32, System.Private.CoreLib">
+    <value>15</value>
+  </data>
+  <data name="lstbGames.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>12, 12</value>
+  </data>
+  <data name="lstbGames.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>165, 529</value>
+  </data>
+  <data name="lstbGames.TabIndex" type="System.Int32, System.Private.CoreLib">
+    <value>8</value>
+  </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing.Primitives">
-    <value>1076, 561</value>
+    <value>1228, 564</value>
   </data>
 </root>

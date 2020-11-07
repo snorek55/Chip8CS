@@ -65,6 +65,8 @@ namespace Core
 				var pos = GameStartAddress + i;
 				bytes[GameStartAddress + i] = msb;
 				i++;
+				if (i == gameBytes.Length)
+					break;
 				var lsb = gameBytes[i];
 				bytes[GameStartAddress + i] = lsb;
 				i++;

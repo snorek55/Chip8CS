@@ -34,8 +34,11 @@ namespace Core
 			if (!File.Exists(path))
 				throw new InvalidOperationException("Path does not exist");
 
+			cpu.Initialize();
 			var gameBytes = File.ReadAllBytes(path);
 			mem.LoadGame(gameBytes);
+			Info = new DissasemblerInfo(Width, Height);
+			OriginalBitmap = new Bitmap(Width, Height);
 		}
 
 		public void Cycle()
