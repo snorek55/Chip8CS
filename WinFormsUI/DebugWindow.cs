@@ -33,7 +33,6 @@ namespace WinFormsUI
 			lstbStack.Items.Clear();
 			lstbVRegisters.Items.Clear();
 
-			lstbOpcodes.DataSource = disassembler.Opcodes;
 			for (int i = 0; i < 16; i++)
 			{
 				lstbStack.Items.Add(i.ToString("X") + " - " + 0);
@@ -65,13 +64,13 @@ namespace WinFormsUI
 				i++;
 			}
 
-			lstbOpcodes.ClearSelected();
+			//lstbOpcodes.ClearSelected();
 
-			if (info.Opcode != null)
-			{
-				var index = lstbOpcodes.Items.IndexOf(info.Opcode);
-				lstbOpcodes.SetSelected(index, true);
-			}
+			//if (info.Opcode != null)
+			//{
+			//	var index = lstbOpcodes.Items.IndexOf(info.Opcode);
+			//	lstbOpcodes.SetSelected(index, true);
+			//}
 
 			if (info.DrawingRequired)
 			{
@@ -203,12 +202,21 @@ namespace WinFormsUI
 
 		private void lstbGames_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			requestedStop = true;
+
 			if (lstbGames.SelectedIndex == -1)
 				return;
 
 			var gameInfo = (FileInfo)lstbGames.Items[lstbGames.SelectedIndex];
 			disassembler.LoadRom(gameInfo.FullName);
 			Initialize();
+		}
+
+		private void btReset_Click(object sender, EventArgs e)
+		{
+			requestedStop = true;
+			disassembler.Reset();
+			UpdateGuiInfo();
 		}
 	}
 }

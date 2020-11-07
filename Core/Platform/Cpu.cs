@@ -27,6 +27,8 @@ namespace Core
 		public byte SoundTimer { get; internal set; }
 		internal bool DrawingRequired { get; set; }
 
+		private OpcodeDecoder decoder = new OpcodeDecoder();
+
 		internal Cpu(Memory memory, Stack16Levels stack)
 		{
 			Memory = memory;
@@ -36,7 +38,6 @@ namespace Core
 
 		public void Initialize()
 		{
-			Memory.Initialize();
 			Stack.Clear();
 			VRegisters = new byte[16];
 			VideoPixels = new bool[VideoWidth, VideoHeight];
@@ -64,8 +65,13 @@ namespace Core
 
 		private void Fetch()
 		{
-			Opcode = Memory.GetOpCode(Pc);
-			Pc += 2;
+			var pos = Pc;
+			var msb = Memory.GetByte(Pc);
+			Pc++;
+			var lsb = Memory.GetByte(Pc);
+			Opcode = decoder.DecodeOp(msb, lsb);
+			Pc++;
+			Opcode.Pos = pos;
 		}
 
 		private void Execute()

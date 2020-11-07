@@ -1,7 +1,4 @@
-﻿using Core.Opcodes;
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -10,7 +7,6 @@ namespace Core
 {
 	public class Disassembler
 	{
-		public IList<BaseOp> Opcodes { get => mem.GameOps; }
 		public DissasemblerInfo Info { get; internal set; }
 		public int Height { get => Cpu.VideoHeight; }
 		public int Width { get => Cpu.VideoWidth; }
@@ -22,7 +18,7 @@ namespace Core
 
 		public Disassembler()
 		{
-			mem = new Memory(new OpcodeDecoder());
+			mem = new Memory();
 			stack = new Stack16Levels();
 			cpu = new Cpu(mem, stack);
 			Info = new DissasemblerInfo(Width, Height);
@@ -34,11 +30,18 @@ namespace Core
 			if (!File.Exists(path))
 				throw new InvalidOperationException("Path does not exist");
 
-			cpu.Initialize();
 			var gameBytes = File.ReadAllBytes(path);
 			mem.LoadGame(gameBytes);
+			Reset();
+		}
+
+		public void Reset()
+		{
 			Info = new DissasemblerInfo(Width, Height);
 			OriginalBitmap = new Bitmap(Width, Height);
+			cpu.Initialize();
+			cpu.DrawingRequired = true;
+			UpdateInfo();
 		}
 
 		public void Cycle()
@@ -68,7 +71,6 @@ namespace Core
 		private void UpdateVideoBitmap(bool[,] originalPixels)
 		{
 			OriginalBitmap = new Bitmap(Width, Height);
-			//Based on: https://ideone.com/rTctxV
 			for (int i = 0; i < OriginalBitmap.Width; i++)
 			{
 				for (int j = 0; j < OriginalBitmap.Height; j++)

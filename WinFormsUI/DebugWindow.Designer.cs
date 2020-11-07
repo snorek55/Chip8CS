@@ -39,12 +39,12 @@
 			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.lblOpcode = new System.Windows.Forms.Label();
-			this.btInitialize = new System.Windows.Forms.Button();
 			this.btCycle = new System.Windows.Forms.Button();
 			this.btRun = new System.Windows.Forms.Button();
 			this.btStop = new System.Windows.Forms.Button();
 			this.pbGame = new System.Windows.Forms.PictureBox();
 			this.lstbGames = new System.Windows.Forms.ListBox();
+			this.btReset = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.pbGame)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -149,19 +149,9 @@
 			this.lblOpcode.TabIndex = 3;
 			this.lblOpcode.Text = "Unintialized";
 			// 
-			// btInitialize
-			// 
-			this.btInitialize.Location = new System.Drawing.Point(652, 13);
-			this.btInitialize.Name = "btInitialize";
-			this.btInitialize.Size = new System.Drawing.Size(75, 23);
-			this.btInitialize.TabIndex = 5;
-			this.btInitialize.Text = "Initialize";
-			this.btInitialize.UseVisualStyleBackColor = true;
-			this.btInitialize.Click += new System.EventHandler(this.btInitialize_Click);
-			// 
 			// btCycle
 			// 
-			this.btCycle.Location = new System.Drawing.Point(653, 41);
+			this.btCycle.Location = new System.Drawing.Point(839, 47);
 			this.btCycle.Name = "btCycle";
 			this.btCycle.Size = new System.Drawing.Size(75, 23);
 			this.btCycle.TabIndex = 5;
@@ -171,7 +161,7 @@
 			// 
 			// btRun
 			// 
-			this.btRun.Location = new System.Drawing.Point(653, 70);
+			this.btRun.Location = new System.Drawing.Point(839, 76);
 			this.btRun.Name = "btRun";
 			this.btRun.Size = new System.Drawing.Size(75, 23);
 			this.btRun.TabIndex = 5;
@@ -181,7 +171,7 @@
 			// 
 			// btStop
 			// 
-			this.btStop.Location = new System.Drawing.Point(734, 70);
+			this.btStop.Location = new System.Drawing.Point(920, 76);
 			this.btStop.Name = "btStop";
 			this.btStop.Size = new System.Drawing.Size(75, 23);
 			this.btStop.TabIndex = 6;
@@ -208,6 +198,16 @@
 			this.lstbGames.TabIndex = 8;
 			this.lstbGames.SelectedIndexChanged += new System.EventHandler(this.lstbGames_SelectedIndexChanged);
 			// 
+			// btReset
+			// 
+			this.btReset.Location = new System.Drawing.Point(920, 47);
+			this.btReset.Name = "btReset";
+			this.btReset.Size = new System.Drawing.Size(75, 23);
+			this.btReset.TabIndex = 9;
+			this.btReset.Text = "Reset";
+			this.btReset.UseVisualStyleBackColor = true;
+			this.btReset.Click += new System.EventHandler(this.btReset_Click);
+			// 
 			// DebugWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -215,12 +215,12 @@
 			this.AutoSize = true;
 			this.BackColor = System.Drawing.Color.White;
 			this.ClientSize = new System.Drawing.Size(1228, 564);
+			this.Controls.Add(this.btReset);
 			this.Controls.Add(this.lstbGames);
 			this.Controls.Add(this.pbGame);
 			this.Controls.Add(this.btStop);
 			this.Controls.Add(this.btRun);
 			this.Controls.Add(this.btCycle);
-			this.Controls.Add(this.btInitialize);
 			this.Controls.Add(this.lblOpcode);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.label4);
@@ -259,12 +259,12 @@
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label lblOpcode;
-		private System.Windows.Forms.Button btInitialize;
 		private System.Windows.Forms.Button btCycle;
 		private System.Windows.Forms.Button btRun;
 		private System.Windows.Forms.Button btStop;
 		private System.Windows.Forms.PictureBox pbGame;
 		private System.Windows.Forms.ListBox lstbGames;
+		private System.Windows.Forms.Button btReset;
 	}
 }
 

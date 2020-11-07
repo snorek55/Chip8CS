@@ -1,5 +1,4 @@
 using Core;
-using Core.Opcodes;
 
 using FluentAssertions;
 
@@ -19,7 +18,7 @@ namespace UnitTests
 		[TestInitialize]
 		public void Initialize()
 		{
-			mem = new Memory(new OpcodeDecoder());
+			mem = new Memory();
 			stack = new Stack16Levels();
 			cpu = new Cpu(mem, stack);
 		}
@@ -27,7 +26,6 @@ namespace UnitTests
 		[TestMethod]
 		public void WhenDxynOpIsExecuted_CpuRequiresDrawing()
 		{
-			mem.GameOps.Add(new OpDxyn(0xD123));
 			mem.SetByte(0x200, 0XD1);
 			mem.SetByte(0x201, 0x23);
 			cpu.VRegisters[1] = 0x25;
@@ -42,7 +40,6 @@ namespace UnitTests
 		[TestMethod]
 		public void WhenReadingFirstOpcode_OpcodeIsOk()
 		{
-			mem.GameOps.Add(new Op1nnn(0x1000));
 			mem.SetByte(0x200, 0X10);
 			mem.SetByte(0x201, 0x00);
 			cpu.Cycle();
@@ -54,7 +51,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_1nnn_Ok()
 		{
-			mem.GameOps.Add(new Op1nnn(0x1001));
+			mem.SetByte(0x200, 0X10);
+			mem.SetByte(0x201, 0x01);
 			cpu.Cycle();
 			cpu.Opcode.Op.Should().Be(0x1001);
 			cpu.Pc.Should().Be(1);
@@ -63,7 +61,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_00E0_Ok()
 		{
-			mem.GameOps.Add(new Op00E0(0));
+			mem.SetByte(0x200, 0X00);
+			mem.SetByte(0x201, 0xE0);
 			cpu.VideoPixels[3, 5] = true;
 			cpu.Cycle();
 			cpu.VideoPixels[3, 5].Should().BeFalse();
@@ -74,7 +73,8 @@ namespace UnitTests
 		{
 			stack.Push(0x40);
 			stack.Push(0x80);
-			mem.GameOps.Add(new Op00EE(0));
+			mem.SetByte(0x200, 0X00);
+			mem.SetByte(0x201, 0xEE);
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X80);
 		}
@@ -82,7 +82,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_2nnn_Ok()
 		{
-			mem.GameOps.Add(new Op2nnn(0x2001));
+			mem.SetByte(0x200, 0X20);
+			mem.SetByte(0x201, 0x01);
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X01);
 
@@ -92,7 +93,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_3xkk_WhenVRegAndByte_AreEqual()
 		{
-			mem.GameOps.Add(new Op3xkk(0x3010));
+			mem.SetByte(0x200, 0X30);
+			mem.SetByte(0x201, 0x10);
 			cpu.VRegisters[0] = 0x10;
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X204);
@@ -101,7 +103,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_3xkk_WhenVRegAndByte_AreNotEqual()
 		{
-			mem.GameOps.Add(new Op3xkk(0x3011));
+			mem.SetByte(0x200, 0X30);
+			mem.SetByte(0x201, 0x11);
 			cpu.VRegisters[0] = 0x10;
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X202);
@@ -110,7 +113,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_4xkk__WhenVRegAndByte_AreEqual()
 		{
-			mem.GameOps.Add(new Op4xkk(0x4011));
+			mem.SetByte(0x200, 0X40);
+			mem.SetByte(0x201, 0x11);
 			cpu.VRegisters[0] = 0x11;
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X202);
@@ -119,7 +123,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_4xkk_WhenVRegAndByte_AreNotEqual()
 		{
-			mem.GameOps.Add(new Op4xkk(0x4010));
+			mem.SetByte(0x200, 0X40);
+			mem.SetByte(0x201, 0x10);
 			cpu.VRegisters[0] = 0x11;
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X204);
@@ -128,7 +133,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_5xy0_WhenVRegisters_AreEqual()
 		{
-			mem.GameOps.Add(new Op5xy0(0x5120));
+			mem.SetByte(0x200, 0X51);
+			mem.SetByte(0x201, 0x20);
 
 			cpu.VRegisters[1] = 0x12;
 			cpu.VRegisters[2] = 0x12;
@@ -139,7 +145,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_5xy0_WhenVRegisters_AreNotEqual()
 		{
-			mem.GameOps.Add(new Op5xy0(0x5120));
+			mem.SetByte(0x200, 0X51);
+			mem.SetByte(0x201, 0x20);
 			cpu.VRegisters[1] = 0x12;
 			cpu.VRegisters[2] = 0x1;
 			cpu.Cycle();
@@ -150,14 +157,16 @@ namespace UnitTests
 		[ExpectedException(typeof(ArgumentException))]
 		public void Op_5xyn_Throws_WhenNIsNot0()
 		{
-			mem.GameOps.Add(new Op5xy0(0x5121));
+			mem.SetByte(0x200, 0X51);
+			mem.SetByte(0x201, 0x21);
 			cpu.Cycle();
 		}
 
 		[TestMethod]
 		public void Op_6xkk_Ok()
 		{
-			mem.GameOps.Add(new Op6xkk(0x6126));
+			mem.SetByte(0x200, 0X61);
+			mem.SetByte(0x201, 0x26);
 			cpu.VRegisters[1] = 0x12;
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X202);
@@ -167,7 +176,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_7xkk_Ok()
 		{
-			mem.GameOps.Add(new Op7xkk(0x7126));
+			mem.SetByte(0x200, 0X71);
+			mem.SetByte(0x201, 0x26);
 			cpu.VRegisters[1] = 0x12;
 			cpu.Cycle();
 			cpu.Pc.Should().Be(0X202);
@@ -177,7 +187,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy0_Ok()
 		{
-			mem.GameOps.Add(new Op8xy0(0x8120));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x20);
 			cpu.VRegisters[1] = 0x15;
 			cpu.VRegisters[2] = 0x56;
 			cpu.Cycle();
@@ -188,7 +199,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy1_Ok()
 		{
-			mem.GameOps.Add(new Op8xy1(0x8121));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x21);
 			cpu.VRegisters[1] = 0x15;
 			cpu.VRegisters[2] = 0x56;
 			var expected = Convert.ToByte(cpu.VRegisters[1] | cpu.VRegisters[2]);
@@ -201,7 +213,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy2_Ok()
 		{
-			mem.GameOps.Add(new Op8xy2(0x8122));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x22);
 			cpu.VRegisters[1] = 0x15;
 			cpu.VRegisters[2] = 0x56;
 			var expected = Convert.ToByte(cpu.VRegisters[1] & cpu.VRegisters[2]);
@@ -214,7 +227,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy3_Ok()
 		{
-			mem.GameOps.Add(new Op8xy3(0x8123));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x23);
 			cpu.VRegisters[1] = 0x15;
 			cpu.VRegisters[2] = 0x56;
 			var expected = Convert.ToByte(cpu.VRegisters[1] ^ cpu.VRegisters[2]);
@@ -227,7 +241,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy4_SumLessThan256_ShouldNotSetCarry_AndSumLowest8Bits()
 		{
-			mem.GameOps.Add(new Op8xy4(0x8124));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x24);
 			cpu.VRegisters[1] = 0x8;
 			cpu.VRegisters[2] = 0x3;
 			cpu.VRegisters[0xF] = 2;//just to make sure it changes
@@ -242,7 +257,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy4_SumGreaterThan256_ShouldSetCarry_AndSumLowest8Bits()
 		{
-			mem.GameOps.Add(new Op8xy4(0x8124));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x24);
 			cpu.VRegisters[1] = 0xFF;
 			cpu.VRegisters[2] = 0x68;
 			cpu.VRegisters[0xF] = 2;//just to make sure it changes
@@ -258,7 +274,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy5_WithNoBorrow()
 		{
-			mem.GameOps.Add(new Op8xy5(0x8125));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x25);
 			cpu.VRegisters[1] = 0x8;
 			cpu.VRegisters[2] = 0x3;
 			cpu.VRegisters[0xF] = 2;//just to make sure it changes
@@ -273,7 +290,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy5_WithBorrow()
 		{
-			mem.GameOps.Add(new Op8xy5(0x8125));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x25);
 			cpu.VRegisters[1] = 0x3;
 			cpu.VRegisters[2] = 0x54;
 			cpu.VRegisters[0xF] = 2;//just to make sure it changes
@@ -289,7 +307,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy6_CarryShouldBe1_SHR_Ok()
 		{
-			mem.GameOps.Add(new Op8xy6(0x8126));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x26);
 			cpu.VRegisters[1] = 0x15;
 			var expected = Convert.ToByte(cpu.VRegisters[1] >> 1);
 			cpu.Cycle();
@@ -302,7 +321,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy6_CarryShouldNotBe1_SHR_Ok()
 		{
-			mem.GameOps.Add(new Op8xy6(0x8126));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x26);
 			cpu.VRegisters[1] = 0x14;
 			var expected = Convert.ToByte(cpu.VRegisters[1] >> 1);
 			cpu.Cycle();
@@ -315,7 +335,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy7_WithNoBorrow()
 		{
-			mem.GameOps.Add(new Op8xy7(0x8127));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x27);
 			cpu.VRegisters[1] = 0x2;
 			cpu.VRegisters[2] = 0x8;
 			cpu.VRegisters[0xF] = 2;//just to make sure it changes
@@ -330,7 +351,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_8xy7_WithBorrow()
 		{
-			mem.GameOps.Add(new Op8xy7(0x8127));
+			mem.SetByte(0x200, 0X81);
+			mem.SetByte(0x201, 0x27);
 			cpu.VRegisters[1] = 0x10;
 			cpu.VRegisters[2] = 0x6;
 			cpu.VRegisters[0xF] = 2;//just to make sure it changes
@@ -346,7 +368,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_9xy0_WhenVRegisters_AreEqual()
 		{
-			mem.GameOps.Add(new Op9xy0(0x9120));
+			mem.SetByte(0x200, 0X91);
+			mem.SetByte(0x201, 0x20);
 			cpu.VRegisters[1] = 0x12;
 			cpu.VRegisters[2] = 0x12;
 			cpu.Cycle();
@@ -356,7 +379,8 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_9xy0_WhenVRegisters_AreNotEqual()
 		{
-			mem.GameOps.Add(new Op9xy0(0x9120));
+			mem.SetByte(0x200, 0X91);
+			mem.SetByte(0x201, 0x20);
 			cpu.VRegisters[1] = 0x12;
 			cpu.VRegisters[2] = 0x11;
 			cpu.Cycle();
@@ -366,7 +390,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Annn_Ok()
 		{
-			mem.GameOps.Add(new OpAnnn(0xA001));
 			mem.SetByte(0x200, 0XA0);
 			mem.SetByte(0x201, 0x01);
 			cpu.Cycle();
@@ -376,7 +399,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Bnnn_Ok()
 		{
-			mem.GameOps.Add(new OpBnnn(0xB001));
 			mem.SetByte(0x200, 0XB0);
 			mem.SetByte(0x201, 0x01);
 			cpu.VRegisters[0] = 0x15;
@@ -387,7 +409,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Ex9E_WhenKeyPressed_Skips()
 		{
-			mem.GameOps.Add(new OpEx9E(0xE09E));
 			mem.SetByte(0x200, 0XE0);
 			mem.SetByte(0x201, 0x9E);
 			cpu.VRegisters[0] = 0x4;
@@ -399,7 +420,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Ex9E_WhenKeyNotPressed_DoesNothing()
 		{
-			mem.GameOps.Add(new OpEx9E(0xE09E));
 			mem.SetByte(0x200, 0XE0);
 			mem.SetByte(0x201, 0x9E);
 			cpu.VRegisters[0] = 0x4;
@@ -411,7 +431,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_ExA1_WhenKeyNotPressed_Skips()
 		{
-			mem.GameOps.Add(new OpExA1(0xE0A1));
 			mem.SetByte(0x200, 0XE0);
 			mem.SetByte(0x201, 0xA1);
 			cpu.VRegisters[0] = 0x4;
@@ -423,7 +442,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_ExA1_WhenKeyPressed_DoesNothing()
 		{
-			mem.GameOps.Add(new OpExA1(0xE0A1));
 			mem.SetByte(0x200, 0XE0);
 			mem.SetByte(0x201, 0xA1);
 			cpu.VRegisters[0] = 0x4;
@@ -435,7 +453,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx07_Ok()
 		{
-			mem.GameOps.Add(new OpFx07(0xF007));
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x07);
 			cpu.DelayTimer = 0x55;
@@ -446,7 +463,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx0A_WhenKeyPressed_ReturnsKeyValueInVx()
 		{
-			mem.GameOps.Add(new OpFx0A(0xF00A));
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x0A);
 			cpu.KeyState[0xE] = true;
@@ -458,7 +474,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx0A_WhenKeyNotPressed_Waits()
 		{
-			mem.GameOps.Add(new OpFx0A(0xF00A));
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x0A);
 			cpu.Cycle();
@@ -468,7 +483,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx15_Ok()
 		{
-			mem.GameOps.Add(new OpFx15(0xF015));
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x15);
 			cpu.VRegisters[0] = 0x14;
@@ -480,7 +494,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx18_Ok()
 		{
-			mem.GameOps.Add(new OpFx18(0xF018));
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x18);
 			cpu.VRegisters[0] = 0x14;
@@ -492,7 +505,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx1E_Ok()
 		{
-			mem.GameOps.Add(new OpFx1E(0xF01E));
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x1E);
 			cpu.VRegisters[0] = 0x14;
@@ -503,7 +515,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx29_Ok()
 		{
-			mem.GameOps.Add(new OpFx29(0xF029));
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x29);
 			cpu.VRegisters[0] = 0x14;
@@ -514,7 +525,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx33_Ok()
 		{
-			mem.GameOps.Add(new OpFx33(0xF033));
 			mem.SetByte(0x200, 0XF0);
 			mem.SetByte(0x201, 0x33);
 			cpu.VRegisters[0] = 0xF1;
@@ -529,7 +539,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx55_Ok()
 		{
-			mem.GameOps.Add(new OpFx55(0xF455));
 			mem.SetByte(0x200, 0XF4);
 			mem.SetByte(0x201, 0x55);
 			cpu.VRegisters[0] = 0xF1;
@@ -554,7 +563,6 @@ namespace UnitTests
 		[TestMethod]
 		public void Op_Fx65_Ok()
 		{
-			mem.GameOps.Add(new OpFx65(0xF465));
 			mem.SetByte(0x200, 0XF4);
 			mem.SetByte(0x201, 0x65);
 			mem.SetByte(0x233, 0xF1);

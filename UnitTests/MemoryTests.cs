@@ -16,7 +16,7 @@ namespace UnitTests
 		[TestInitialize]
 		public void Initialize()
 		{
-			mem = new Memory(new OpcodeDecoder());
+			mem = new Memory();
 		}
 
 		[TestMethod]

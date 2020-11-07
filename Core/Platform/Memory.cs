@@ -1,7 +1,4 @@
-﻿using Core.Opcodes;
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Core
 {
@@ -35,22 +32,16 @@ namespace Core
 
 		private const ushort MaxBytes = 4096;
 
-		//TODO: adding an opcode should add bytes to mem, given a mem pos
-		public IList<BaseOp> GameOps { get; private set; } = new List<BaseOp>();
-
 		private byte[] bytes = new byte[MaxBytes];
-		private OpcodeDecoder decoder;
 
-		internal Memory(OpcodeDecoder decoder)
+		internal Memory()
 		{
-			this.decoder = decoder;
 			Initialize();
 		}
 
 		internal void Initialize()
 		{
 			bytes = new byte[MaxBytes];
-			GameOps.Clear();
 
 			for (int i = 0; i < 80; ++i)
 				bytes[FonsetStartAddress + i] = Fontset[i];
@@ -59,37 +50,11 @@ namespace Core
 		public void LoadGame(byte[] gameBytes)
 		{
 			Initialize();
-			for (int i = 0; i < gameBytes.Length;)
+			for (int i = 0; i < gameBytes.Length; i++)
 			{
-				var msb = gameBytes[i];
-				var pos = GameStartAddress + i;
-				bytes[GameStartAddress + i] = msb;
-				i++;
-				if (i == gameBytes.Length)
-
-				{
-					var unknownOp = new OpUnknown(msb);
-					unknownOp.Pos = pos;
-					GameOps.Add(unknownOp);
-					break;
-				}
-				var lsb = gameBytes[i];
-				bytes[GameStartAddress + i] = lsb;
-				i++;
-				var op = decoder.DecodeOp(msb, lsb);
-				op.Pos = pos;
-				GameOps.Add(op);
+				var b = gameBytes[i];
+				bytes[GameStartAddress + i] = b;
 			}
-		}
-
-		public BaseOp GetOpCode(ushort pc)
-		{
-			var rva = pc - GameStartAddress;
-			if (rva % 2 != 0)
-				rva--;
-
-			var opIndex = rva / 2;
-			return GameOps[opIndex];
 		}
 
 		public byte GetByte(ushort pos)
