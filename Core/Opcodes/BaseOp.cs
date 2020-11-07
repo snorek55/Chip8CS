@@ -7,7 +7,8 @@ namespace Core.Opcodes
 		public ushort Op { get; set; }
 		public int Pos { get; internal set; }
 
-		public const string WordFormat = "X3";
+		public const string _3ByteFormat = "X3";
+		public const string WordFormat = "X4";
 
 		public const string ByteFormat = "X1";
 
@@ -27,7 +28,7 @@ namespace Core.Opcodes
 
 		public override string ToString()
 		{
-			return $"${Pos.ToString(WordFormat)} ({Op.ToString(WordFormat)}) -";
+			return $"${Pos.ToString(_3ByteFormat)} ({Op.ToString(WordFormat)}) -";
 		}
 	}
 }

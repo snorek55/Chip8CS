@@ -12,7 +12,7 @@ namespace Core.Opcodes
 		{
 			byte firstByte = Convert.ToByte(op & 0x000Fu);
 			if (firstByte != 0)
-				IsValid = false;
+				throw new ArgumentException("Such opcode does not exist.");
 
 			Vx = Convert.ToByte((op & 0x0F00u) >> 8);
 			Vy = Convert.ToByte((op & 0x00F0u) >> 4);

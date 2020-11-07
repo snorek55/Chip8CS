@@ -14,7 +14,7 @@
 
 		public override string ToString()
 		{
-			return $"{base.ToString()} UNKOWN: {Op.ToString(WordFormat)}";
+			return $"{base.ToString()} UNKOWN: {Op.ToString(_3ByteFormat)}";
 		}
 	}
 }

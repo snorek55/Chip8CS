@@ -13,7 +13,7 @@ namespace Core.Opcodes
 
 		public override string ToString()
 		{
-			return $"{base.ToString()} JP {Address.ToString(WordFormat)}";
+			return $"{base.ToString()} JP {Address.ToString(_3ByteFormat)}";
 		}
 
 		internal override void Execute(Cpu cpu)

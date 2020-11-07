@@ -10,7 +10,6 @@ namespace Core
 		private delegate BaseOp ExecuteDel();
 
 		private readonly Dictionary<byte, ExecuteDel> generalFunctions = new Dictionary<byte, ExecuteDel>();
-		private readonly Dictionary<byte, ExecuteDel> functions0 = new Dictionary<byte, ExecuteDel>();
 		private readonly Dictionary<byte, ExecuteDel> functions8 = new Dictionary<byte, ExecuteDel>();
 		private readonly Dictionary<byte, ExecuteDel> functionsF = new Dictionary<byte, ExecuteDel>();
 
@@ -21,7 +20,7 @@ namespace Core
 			InitializeFunctions();
 		}
 
-		internal BaseOp DecodeOp(byte msb,byte lsb)
+		internal BaseOp DecodeOp(byte msb, byte lsb)
 		{
 			CurrentOp = Convert.ToUInt16((msb << 8) | lsb);
 
@@ -80,9 +79,6 @@ namespace Core
 			generalFunctions.Add(0xE, new ExecuteDel(Op_Exyn));
 			generalFunctions.Add(0xF, new ExecuteDel(Op_Fxyn));
 
-			functions0.Add(0x0, new ExecuteDel(() => { return new Op00E0(CurrentOp); }));
-			functions0.Add(0xE, new ExecuteDel(() => { return new Op00EE(CurrentOp); }));
-
 			functions8.Add(0x0, new ExecuteDel(() => { return new Op8xy0(CurrentOp); }));
 			functions8.Add(0x1, new ExecuteDel(() => { return new Op8xy1(CurrentOp); }));
 			functions8.Add(0x2, new ExecuteDel(() => { return new Op8xy2(CurrentOp); }));
@@ -108,11 +104,12 @@ namespace Core
 
 		private BaseOp Op_0nnn()
 		{
-			var specialCode = Convert.ToByte(CurrentOp & 0x000Fu);
-			if (functions0.ContainsKey(specialCode))
-				return functions0[specialCode].Invoke();
+			if (CurrentOp == 0x00E0)
+				return new Op00E0(CurrentOp);
+			else if (CurrentOp == 0x00EE)
+				return new Op00EE(CurrentOp);
 			else
-				return new OpUnknown(CurrentOp);
+				return new Op0nnn(CurrentOp);
 		}
 
 		private BaseOp Op_8xyn()

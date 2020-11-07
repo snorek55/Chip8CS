@@ -66,7 +66,13 @@ namespace Core
 				bytes[GameStartAddress + i] = msb;
 				i++;
 				if (i == gameBytes.Length)
+
+				{
+					var unknownOp = new OpUnknown(msb);
+					unknownOp.Pos = pos;
+					GameOps.Add(unknownOp);
 					break;
+				}
 				var lsb = gameBytes[i];
 				bytes[GameStartAddress + i] = lsb;
 				i++;
