@@ -488,7 +488,7 @@ namespace UnitTests
 			cpu.VRegisters[0] = 0x14;
 			cpu.DelayTimer = 0x55;
 			cpu.Cycle();
-			cpu.DelayTimer.Should().Be(0x13);
+			cpu.DelayTimer.Should().Be(0x14);
 		}
 
 		[TestMethod]
@@ -499,7 +499,7 @@ namespace UnitTests
 			cpu.VRegisters[0] = 0x14;
 			cpu.SoundTimer = 0x55;
 			cpu.Cycle();
-			cpu.SoundTimer.Should().Be(0x13);
+			cpu.SoundTimer.Should().Be(0x14);
 		}
 
 		[TestMethod]

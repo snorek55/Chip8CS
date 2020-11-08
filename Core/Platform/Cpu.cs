@@ -1,5 +1,7 @@
 ﻿using Core.Opcodes;
+using Core.Platform;
 
+using System;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("UnitTests")]
@@ -9,23 +11,36 @@ namespace Core
 	//Info from https://austinmorlan.com/posts/chip8_emulator/
 	internal class Cpu
 	{
-		private const ushort StartAddress = 0x200;
 		internal const int VideoWidth = 65;
 		internal const int VideoHeight = 33;
 		internal const byte SpriteColumns = 8;
+		private const ushort StartAddress = 0x200;
+
+		internal ushort IndexRegister { get; set; }
 		internal Memory Memory { get; private set; }
-
 		internal Stack16Levels Stack { get; private set; }
-		public ushort IndexRegister { get; internal set; }
 
-		public byte[] VRegisters { get; private set; }
-		public ushort Pc { get; internal set; }
-		public BaseOp Opcode { get; private set; }
-		public bool[,] VideoPixels { get; internal set; } = new bool[VideoWidth, VideoHeight];
+		internal byte[] VRegisters { get; private set; }
+		internal ushort Pc { get; set; }
+		internal BaseOp Opcode { get; private set; }
+		internal bool[,] VideoPixels { get; set; } = new bool[VideoWidth, VideoHeight];
 		internal bool[] KeyState = new bool[16];
-		public byte DelayTimer { get; internal set; }
-		public byte SoundTimer { get; internal set; }
+
+		internal byte DelayTimer
+		{
+			get => Convert.ToByte(delayTimer.Ticks);
+			set => delayTimer.Ticks = value;
+		}
+
+		internal byte SoundTimer
+		{
+			get => Convert.ToByte(soundTimer.Ticks);
+			set => soundTimer.Ticks = value;
+		}
+
 		internal bool DrawingRequired { get; set; }
+		private readonly Timer60Hz delayTimer = new Timer60Hz();
+		private readonly Timer60Hz soundTimer = new Timer60Hz();
 
 		private readonly OpcodeDecoder decoder = new OpcodeDecoder();
 
@@ -55,12 +70,6 @@ namespace Core
 
 			Fetch();
 			Execute();
-
-			if (DelayTimer > 0)
-				DelayTimer--;
-
-			if (SoundTimer > 0)
-				SoundTimer--;
 		}
 
 		private void Fetch()

@@ -99,7 +99,7 @@ namespace WinFormsUI
 		private void Run()
 		{
 			Stopwatch stopwatch = new Stopwatch();
-			var clockTickMs = 4;
+			var clockTickMs = 0;
 			while (!requestedStop)
 			{
 				stopwatch.Reset();
