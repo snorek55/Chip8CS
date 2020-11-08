@@ -60,6 +60,9 @@
     <None Update="Games\TANK">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Games\test_opcode">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Games\TETRIS">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
