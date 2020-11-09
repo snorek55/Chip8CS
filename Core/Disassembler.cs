@@ -83,10 +83,12 @@ namespace Core
 			}
 
 			var resized = new Bitmap(OriginalBitmap.Width * 6, OriginalBitmap.Height * 6);
-			using var g = Graphics.FromImage(resized);
-			g.InterpolationMode = InterpolationMode.NearestNeighbor;
-			g.DrawImage(OriginalBitmap, 0, 0, resized.Width, resized.Height);
-			Info.VideoBitmap = resized;
+			using (var g = Graphics.FromImage(resized))
+			{
+				g.InterpolationMode = InterpolationMode.NearestNeighbor;
+				g.DrawImage(OriginalBitmap, 0, 0, resized.Width, resized.Height);
+				Info.VideoBitmap = resized;
+			}
 		}
 	}
 }

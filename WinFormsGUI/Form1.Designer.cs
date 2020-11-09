@@ -1,6 +1,6 @@
-﻿namespace WinFormsUI
+﻿namespace WinFormsGUI
 {
-	partial class DebugWindow
+	partial class Form1
 	{
 		/// <summary>
 		///  Required designer variable.

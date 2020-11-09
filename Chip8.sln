@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{C525254D-5DB0-4E6B-9DBE-90B83E41B79C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsUI", "WinFormsUI\WinFormsUI.csproj", "{1A9D1C1E-1F1D-4A19-A0D8-3B39A9FC6BA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsGUI", "WinFormsGUI\WinFormsGUI.csproj", "{B5FDD29C-B4F8-42F2-8FC1-3CFF7B0BD05B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{C525254D-5DB0-4E6B-9DBE-90B83E41B79C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C525254D-5DB0-4E6B-9DBE-90B83E41B79C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C525254D-5DB0-4E6B-9DBE-90B83E41B79C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A9D1C1E-1F1D-4A19-A0D8-3B39A9FC6BA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A9D1C1E-1F1D-4A19-A0D8-3B39A9FC6BA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A9D1C1E-1F1D-4A19-A0D8-3B39A9FC6BA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A9D1C1E-1F1D-4A19-A0D8-3B39A9FC6BA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5FDD29C-B4F8-42F2-8FC1-3CFF7B0BD05B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5FDD29C-B4F8-42F2-8FC1-3CFF7B0BD05B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5FDD29C-B4F8-42F2-8FC1-3CFF7B0BD05B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5FDD29C-B4F8-42F2-8FC1-3CFF7B0BD05B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

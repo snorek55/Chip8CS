@@ -1,4 +1,5 @@
-﻿using Core.Games;
+﻿using Core;
+using Core.Games;
 using Core.ViewModels;
 
 using System;
@@ -8,11 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Disassembler = Core.Disassembler;
-
-namespace WinFormsUI
+namespace WinFormsGUI
 {
-	public partial class DebugWindow : Form
+	public partial class Form1 : Form
 	{
 		private Disassembler disassembler = new Disassembler();
 
@@ -22,7 +21,7 @@ namespace WinFormsUI
 
 		private readonly SynchronizationContext synchronizationContext;
 
-		public DebugWindow()
+		public Form1()
 		{
 			InitializeComponent();
 			bsMainView.DataSource = mainViewModel;
