@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace Core
 {
-	public class DissasemblerInfo
+	public class DisassemblerInfo
 	{
 		public ushort IndexRegister { get; internal set; }
 		public ushort Pc { get; internal set; }
@@ -17,7 +17,7 @@ namespace Core
 
 		public Bitmap VideoBitmap { get; internal set; }
 
-		public DissasemblerInfo(int width, int height)
+		public DisassemblerInfo(int width, int height)
 		{
 			VideoBitmap = new Bitmap(width, height);
 		}

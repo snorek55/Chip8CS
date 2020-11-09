@@ -13,10 +13,10 @@ namespace WinFormsGUI
 {
 	public partial class Form1 : Form
 	{
-		private Disassembler disassembler = new Disassembler();
+		private readonly Disassembler disassembler = new Disassembler();
 
-		private GameLoader loader = new GameLoader();
-		private MainViewModel mainViewModel = new MainViewModel();
+		private readonly GameLoader loader = new GameLoader();
+		private readonly MainViewModel mainViewModel;
 		private bool requestedStop;
 
 		private readonly SynchronizationContext synchronizationContext;
@@ -24,64 +24,23 @@ namespace WinFormsGUI
 		public Form1()
 		{
 			InitializeComponent();
-			bsMainView.DataSource = mainViewModel;
-
-			pbGame.Image = disassembler.Info.VideoBitmap;
 			synchronizationContext = SynchronizationContext.Current;
-			lstbGames.DataSource = loader.GamesFullPaths;
-			lstbGames.DisplayMember = nameof(FileInfo.Name);
-		}
+			mainViewModel = new MainViewModel(loader, disassembler);
 
-		private void Initialize()
-		{
-			lstbOpcodes.DataSource = null;
-			lstbStack.Items.Clear();
-			lstbVRegisters.Items.Clear();
-
-			for (int i = 0; i < 16; i++)
-			{
-				lstbStack.Items.Add(i.ToString("X") + " - " + 0);
-				lstbVRegisters.Items.Add(i.ToString("X") + " - " + 0);
-			}
-
-			UpdateGuiInfo();
+			bsMainView.DataSource = mainViewModel;
+			bsInfo.DataSource = mainViewModel.Info;
+			pbGame.Image = disassembler.Info.VideoBitmap;
 		}
 
 		private void UpdateGuiInfo()
 		{
 			var info = disassembler.Info;
-			lblIndexRegister.Text = info.IndexRegister.ToString("X");
-			lblOpcode.Text = info.Opcode?.ToString();
-			lblPc.Text = info.Pc.ToString("X");
-
-			var i = 0;
-			foreach (var level in info.StackLevels)
-			{
-				lstbStack.Items[i] = i.ToString("X") + " - " + level.ToString("X");
-				i++;
-			}
-
-			i = 0;
-			foreach (var reg in info.VRegisters)
-			{
-				lstbVRegisters.Items[i] = i.ToString("X") + " - " + reg.ToString("X");
-
-				i++;
-			}
-
-			//lstbOpcodes.ClearSelected();
-
-			//if (info.Opcode != null)
-			//{
-			//	var index = lstbOpcodes.Items.IndexOf(info.Opcode);
-			//	lstbOpcodes.SetSelected(index, true);
-			//}
-
 			if (info.DrawingRequired)
 			{
 				pbGame.Image = info.VideoBitmap;
 				pbGame.Size = info.VideoBitmap.Size;
 			}
+			mainViewModel.Update();
 		}
 
 		private void Run()
@@ -204,18 +163,6 @@ namespace WinFormsGUI
 			disassembler.OnKeyChanged(num, true);
 		}
 
-		private void lstbGames_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			requestedStop = true;
-
-			if (lstbGames.SelectedIndex == -1)
-				return;
-
-			var gameInfo = (FileInfo)lstbGames.Items[lstbGames.SelectedIndex];
-			disassembler.LoadRom(gameInfo.FullName);
-			Initialize();
-		}
-
 		private void btReset_Click(object sender, EventArgs e)
 		{
 			requestedStop = true;
@@ -229,11 +176,13 @@ namespace WinFormsGUI
 			{
 				var fileName = ofdLoadRom.FileName;
 				var fileInfo = new FileInfo(fileName);
-				loader.GamesFullPaths.Add(fileInfo);
-				lstbGames.DataSource = null;
-				lstbGames.DataSource = loader.GamesFullPaths;
-				lstbGames.DisplayMember = nameof(FileInfo.Name);
+				mainViewModel.LoadNewGame(fileInfo.Name, fileInfo.FullName);
 			}
+		}
+
+		private void bsGamesList_CurrentChanged(object sender, EventArgs e)
+		{
+			mainViewModel.SelectedGameFullPath = ((GameListItemViewModel)bsGamesList.Current).FullPath;
 		}
 
 		#endregion Events

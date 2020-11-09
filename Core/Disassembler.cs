@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -7,7 +8,7 @@ namespace Core
 {
 	public class Disassembler
 	{
-		public DissasemblerInfo Info { get; internal set; }
+		public DisassemblerInfo Info { get; internal set; }
 		public int Height { get => Cpu.VideoHeight; }
 		public int Width { get => Cpu.VideoWidth; }
 
@@ -21,12 +22,15 @@ namespace Core
 			mem = new Memory();
 			stack = new Stack16Levels();
 			cpu = new Cpu(mem, stack);
-			Info = new DissasemblerInfo(Width, Height);
+			Info = new DisassemblerInfo(Width, Height);
 			OriginalBitmap = new Bitmap(Width, Height);
 		}
 
 		public void LoadRom(string path)
 		{
+			if (path == null)
+				throw new NoNullAllowedException();
+
 			if (!File.Exists(path))
 				throw new InvalidOperationException("Path does not exist");
 
@@ -37,7 +41,7 @@ namespace Core
 
 		public void Reset()
 		{
-			Info = new DissasemblerInfo(Width, Height);
+			Info = new DisassemblerInfo(Width, Height);
 			OriginalBitmap = new Bitmap(Width, Height);
 			cpu.Initialize();
 			cpu.DrawingRequired = true;
